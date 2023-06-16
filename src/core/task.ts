@@ -15,6 +15,7 @@ export interface TaskModel {
     buttonClasses?: string | string[];
     buttonHtml?: string;
     enableDragging?: boolean;
+    moveRow?: boolean; // false prevents moving to another row
 }
 
 export interface SvelteTask {
@@ -62,7 +63,8 @@ export class TaskFactory {
         model.buttonHtml = model.buttonHtml || ''
         // enable dragging of task
         model.enableDragging = model.enableDragging === undefined ? true : model.enableDragging;
-        
+        model.moveRow = model.moveRow === undefined ? true : model.moveRow;
+
         const left = this.columnService.getPositionByDate(model.from) | 0;
         const right = this.columnService.getPositionByDate(model.to) | 0; 
 

@@ -127,7 +127,10 @@
         function updatePosition(x, y, width) {
             if(!_dragging && !_resizing) {
                 _position.x = x;
-                _position.y = y;
+                // "moveRow" = false prevents moving to another row
+                if (model.moveRow) {
+                    _position.y = y;
+                }
                 _position.width = width;
                 // should NOT animate on resize/update of columns
             }
@@ -234,7 +237,12 @@
             };
     
             const ondrag = (event) => {
-                (_position.x = event.x), (_position.y = event.y), (_dragging = true);
+                (_position.x = event.x);
+                //"moveRow" = false prevents moving to another row
+                if (model.moveRow) {
+                    (_position.y = event.y);
+                }
+                (_dragging = true);
                 api.tasks.raise.move(model);
             };
             const onmouseup = () => {
