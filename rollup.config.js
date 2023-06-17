@@ -10,13 +10,22 @@ const production = !process.env.ROLLUP_WATCH;
 
 export default {
     input: 'src/index.ts',
-    output: {
-        sourcemap: true,
-        format: 'iife',
-        name: 'window',
-        extend: true,
-        dir: 'dist'
-    },
+    output: [
+        {
+            file: 'dist/index.js',
+            sourcemap: true,
+            format: 'es',
+            name: 'window',
+            extend: true
+        },
+        {
+            file: 'dist/index.iife.js',
+            sourcemap: true,
+            format: 'iife',
+            name: 'window',
+            extend: true
+        }
+    ],
     plugins: [
         svelte({
             dev: !production,
