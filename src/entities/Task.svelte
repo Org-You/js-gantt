@@ -11,10 +11,10 @@
         offsetData: offsetData;
         draggable: Draggable;
     }
-    
-    export const tasksSettings: Map<number, DraggableSettings> = new Map();
-    export const currentSelection: Map<number, selectedItem> = new Map();
-    
+
+    export const tasksSettings: Map<number|string, DraggableSettings> = new Map();
+    export const currentSelection: Map<number|string, selectedItem> = new Map();
+
     const oldReflections = [];
     const newTasksAndReflections = [];
     
@@ -38,19 +38,31 @@
         }
     
         dispatchSelectionEvent(taskId, event) {
-            const x = tasksSettings.get(taskId).getX();
-            const y = tasksSettings.get(taskId).getY();
-            const width = tasksSettings.get(taskId).getWidth();
-    
+            let taskSetting = tasksSettings.get(taskId);
+
+            if (taskSetting === undefined) {
+                taskSetting = tasksSettings.get(taskId.toString());
+            }
+
+            const x = taskSetting.getX();
+            const y = taskSetting.getY();
+            const width = taskSetting.getWidth();
+
             for (const [selId, selectedItem] of currentSelection.entries()) {
                 selectedItem.HTMLElement.classList.add('sg-task-selected');
-                if (selId !== taskId) {     
+                if (selId !== taskId) {
+                    taskSetting = tasksSettings.get(selId);
+
+                    if (taskSetting === undefined) {
+                        taskSetting = tasksSettings.get(selId.toString());
+                    }
+
                     selectedItem.offsetData = {
                         offsetPos: {
-                            x: tasksSettings.get(selId).getX() - x,
-                            y: tasksSettings.get(selId).getY() - y
+                            x: taskSetting.getX() - x,
+                            y: taskSetting.getY() - y
                         },
-                        offsetWidth: tasksSettings.get(selId).getWidth() - width,
+                        offsetWidth: taskSetting.getWidth() - width,
                     }
                 } else {
                     selectedItem.offsetData = {
@@ -67,7 +79,13 @@
         
         dragOrResizeTriggered = (event) =>{
             for (let [selId, selectedItem] of currentSelection.entries()) {
-                const draggable = new Draggable(selectedItem.HTMLElement, tasksSettings.get(selId), selectedItem.offsetData);
+                let taskSetting = tasksSettings.get(selId);
+
+                if (taskSetting === undefined) {
+                    taskSetting = tasksSettings.get(selId.toString());
+                }
+
+                const draggable = new Draggable(selectedItem.HTMLElement, taskSetting, selectedItem.offsetData);
                 draggable.onmousedown(event);
                 currentSelection.set(selId, {...selectedItem, draggable: draggable });
             }
