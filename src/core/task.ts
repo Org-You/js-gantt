@@ -1,5 +1,6 @@
 import type { SvelteRow } from './row';
 import type { ColumnService } from './column';
+import {Readable} from "svelte/store";
 
 export interface TaskModel {
     id: number; // | string;
@@ -80,6 +81,16 @@ export class TaskFactory {
 
     createTasks(tasks: TaskModel[]) {
         return tasks.map(task => this.createTask(task));
+    }
+
+
+    updateTasks(tasks: Readable<SvelteTask[]>) {
+        return tasks.map(task => this.updateTask(task));
+    }
+    updateTask(task: SvelteTask) {
+        height: this.getHeight(task.model);
+        task.top = this.getPosY(task.model);
+        return task;
     }
 
     row(resourceId): SvelteRow{

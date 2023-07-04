@@ -10,17 +10,21 @@ interface EntityState<T> {
 }
 
 interface EntityType {
-    model: { id: string | number },
-    hidden?: boolean
+    model: { id: string | number},
+    hidden?: boolean,
+    y: number,
+    height: number
 }
 
 export interface EntityStore<T extends EntityType> extends Readable<EntityState<T>> {
     _update(updater: (value: EntityState<T>) => EntityState<T>): void;
     add(entity: T): void;
+    insertAt(entity: T, afterId: null|number|string): void;
     addAll(entities: T[]): void;
     update(entity: T): void;
     upsert(entity: T): void;
     upsertAll(entities: T[]): void;
+    remove(id: number | string): void;
     delete(id: number | string): void;
     deleteAll(ids: (number | string)[]): void;
     refresh(): void;
@@ -42,6 +46,81 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
                 [item.model.id]: item
             }
         })),
+
+        insertAt: (item: T, afterId: null|number|string) => update(state => {
+            const entities = { ...state.entities };
+            let ids = [...state.ids];
+
+            if (afterId !== null) {
+                let insertIndex = ids.indexOf(afterId);
+                if (insertIndex === -1) {
+                    if (typeof afterId == 'string') {
+                        insertIndex = ids.indexOf(parseInt(afterId));
+                    } else if (typeof afterId == 'number') {
+                        insertIndex = ids.indexOf(afterId.toString());
+                    }
+                }
+                if (insertIndex !== -1) {
+                    ids.splice(insertIndex + 1, 0, item.model.id);
+                    entities[item.model.id] = item;
+                }
+            } else {
+                const hasIndex = ids.indexOf(item.model.id) !== -1;
+                ids = hasIndex ? ids : [...ids, item.model.id];
+                entities[item.model.id] = item;
+            }
+
+            // Update Row Y Position
+            let y = 0;
+            ids.forEach(id => {
+                const row = entities[id];
+                if(!row.hidden) {
+                    entities[id].y = y;
+                    y+= entities[id].height;
+                }
+            });
+
+            return {
+                ids,
+                entities
+            };
+        }),
+        remove: (id: number | string) => update(state => {
+            const { [id]: _, ...entities } = state.entities;
+            let ids = [...state.ids];
+
+            let removeId = id;
+            let insertIndex = ids.indexOf(removeId);
+            if (insertIndex === -1) {
+                if (typeof id == 'string') {
+                    removeId = parseInt(id);
+                    insertIndex = ids.indexOf(removeId);
+                } else if (typeof id == 'number') {
+                    removeId = id.toString();
+                    insertIndex = ids.indexOf(removeId);
+                }
+            }
+            console.log(ids, insertIndex, removeId);
+            if (insertIndex !== -1) {
+                ids = ids.filter(i => i !== removeId);
+                delete entities[removeId];
+            }
+
+            // Update Row Y Position
+            let y = 0;
+            ids.forEach(id => {
+                const row = entities[id];
+                if(!row.hidden) {
+                    entities[id].y = y;
+                    y+= entities[id].height;
+                }
+            });
+
+            return {
+                ids,
+                entities
+            };
+        }),
         delete: (id: number | string) => update(state => {
             const { [id]: _, ...entities } = state.entities;
             return {

@@ -40,5 +40,6 @@
 
     .sg-cell-inner {
         display: flex;
+        align-items: center;
     }
 </style>

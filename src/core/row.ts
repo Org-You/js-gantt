@@ -96,4 +96,42 @@ export class RowFactory {
             allRows
         };
     }
+
+    updateRows(rows:SvelteRow[]) {
+        const ctx = { y: 0, result: [] };
+        this.updateChildRows(rows, ctx);
+        return ctx.result;
+    }
+    updateChildRows(rowModels: SvelteRow[], ctx: { y: number, result: SvelteRow[] }, parent: SvelteRow = null, level: number = 0, parents: SvelteRow[] = []) {
+        const rowsAtLevel = [];
+        const allRows = [];
+
+        if(parent) {
+            parents = [...parents, parent];
+        }
+
+        rowModels.forEach(rowModel => {
+            rowModel.y = ctx.y;
+            ctx.result.push(rowModel);
+            rowsAtLevel.push(rowModel);
+            allRows.push(rowModel);
+
+            rowModel.childLevel = level;
+            rowModel.parent = parent;
+            rowModel.allParents = parents;
+
+            ctx.y += rowModel.height;
+
+            if(rowModel.children) {
+                const nextLevel = this.updateChildRows(rowModel.children, ctx, rowModel, level+1, parents);
+                rowModel.children = nextLevel.rows;
+                rowModel.allChildren = nextLevel.allRows;
+                allRows.push(...nextLevel.allRows);
+            }
+        });
+        return {
+            rows: rowsAtLevel,
+            allRows
+        };
+    }
 }

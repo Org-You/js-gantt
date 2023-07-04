@@ -71,7 +71,7 @@
     $: {
         $_minWidth = minWidth;
         $_fitWidth = fitWidth;
-    } 
+    }
 
     export let classes = [];
     export let headers = [{unit: 'day', format: 'MMMM Do'}, {unit: 'hour', format: 'H:mm'}];
@@ -136,7 +136,7 @@
     const _width = derived([visibleWidth, _minWidth, _fitWidth], ([visible, min, stretch]) => {
         return stretch && visible > min ? visible : min;
     });
-    
+
     export const columnService = {
         getColumnByDate(date: number) {
             const pair = findByDate(columns, date);
@@ -149,7 +149,7 @@
         getPositionByDate (date: number) {
             if(!date) return null;
             const column = this.getColumnByDate(date);
-            
+
             let durationTo = date - column.from;
             const position = durationTo / column.duration * column.width;
 
@@ -166,7 +166,7 @@
             return date;
         },
         /**
-         * 
+         *
          * @param {number} date - Date
          * @returns {number} rounded date passed as parameter
          */
@@ -177,7 +177,7 @@
     }
 
     let disableTransition = true;
-    
+
     async function tickWithoutCSSTransition() {
         disableTransition = !disableTransition;
         await tick();
@@ -195,10 +195,10 @@
 
     function getColumnsV2(from:number | Date, to:number | Date, unit:string, offset:number, width:number): Column[] {
         //BUG: Function is running twice on init, how to prevent it?
-        
+
         if(from instanceof Date) from = from.valueOf();
         if(to instanceof Date) to = to.valueOf();
-        
+
         let cols            = [];
         const periods       = getAllPeriods(from.valueOf(), to.valueOf(), unit, offset, highlightedDurations);
         let left            = 0;
@@ -242,10 +242,10 @@
     const hoveredRow = writable<number>(null);
     const selectedRow = writable<number>(null);
 
-    const ganttContext = { 
-        scrollables, 
-        hoveredRow, 
-        selectedRow 
+    const ganttContext = {
+        scrollables,
+        hoveredRow,
+        selectedRow
     };
     setContext('gantt', ganttContext);
 
@@ -441,9 +441,9 @@
         });
         timeRangeStore.addAll(timeRanges);
     }
-    
+
     function onModuleInit(module) {
-        
+
     }
 
     export const api = new GanttApi();
@@ -523,7 +523,7 @@
 
     export function scrollToRow(id, scrollBehavior = 'auto') {
         const { scrollTop, clientHeight } = mainContainer;
-        
+
         const index = $allRows.findIndex(r => r.model.id == id);
         if(index === -1) return;
         const targetTop = index * rowHeight;
@@ -545,13 +545,13 @@
 
 	export function scrollToTask(id, scrollBehavior = 'auto') {
         const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
-        
+
         const task = $taskStore.entities[id];
         if(!task) return;
         const targetLeft = task.left;
         const rowIndex = $allRows.findIndex(r => r.model.id == task.model.resourceId);
         const targetTop = rowIndex * rowHeight;
-        
+
         const options = {
             top: undefined,
             left: undefined,
@@ -573,7 +573,7 @@
         if(targetTop > scrollTop + clientHeight) {
             options.top = targetTop + rowHeight - clientHeight;
         }
-        
+
         mainContainer.scrollTo(options);
     }
 
@@ -599,6 +599,56 @@
 
     export function getRow(resourceId) {
         return $rowStore.entities[resourceId];
+    }
+
+    export function insertRow(model, afterId = null) {
+        //Create new Row
+        const row = rowFactory.createRow(model, null);
+
+        // Insert row after Row with Id
+        rowStore.insertAt(row, afterId);
+
+        // Update Rows
+        const rows = rowFactory.updateRows($allRows);
+        rowStore.upsertAll(rows);
+
+        // Update Tasks
+        taskFactory.updateTasks($allTasks);
+    }
+
+    export function insertChildRow(model, parentId, afterId = null) {
+        // Get Parent Row
+        let parentRow = getRow(parentId);
+
+        // Create new Row
+        const row = rowFactory.createRow(model, null);
+
+        // Add new Row to Parent
+        if ( !parentRow.model.children) {
+            parentRow.model.children = [];
+        }
+        parentRow.model.children = [...parentRow.model.children, model];
+        parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
+
+        // Add Parent to Row
+        row.childLevel = parentRow.childLevel + 1;
+        row.parent = parentRow;
+        row.allParents = row.allParents ? [...row.allParents, parentRow] : [parentRow];
+
+        // Insert new Row
+        rowStore.insertAt(row, afterId);
+
+        // Update Tasks
+        taskFactory.updateTasks($allTasks);
+    }
+
+    export function deleteRow(rowId:number|string) {
+        rowStore.remove(rowId);
+
+        console.log($allRows);
+
+        // Update Tasks
+        taskFactory.updateTasks($allTasks);
     }
 
     export function getTask(id) {
@@ -683,7 +733,7 @@
                         {/each}
                     </div>
                 </div>
-                
+
                 <div class="sg-foreground">
                     {#each $allTimeRanges as timeRange (timeRange.model.id)}
                     <TimeRange {...timeRange} />
@@ -711,7 +761,7 @@
     :global(.sg-view:not(:first-child)) {
         margin-left: 5px;
     }
-    
+
     /* This class should take into account varying widths of the scroll bar
     .right-scrollbar-visible {
         padding-right: 17px;

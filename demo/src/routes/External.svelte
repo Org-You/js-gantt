@@ -21,7 +21,8 @@
             label: "Business Development",
         }, {
             id: 3,
-            label: "Ida Flewan"
+            label: "Ida Flewan",
+            headerHtml: ' <span>Ida Flewan</span> <button class="btn" data-add-row="3"><i class="bi bi-plus-circle"></i></button>',
         }, {
             id: 4,
             label: "Lauréna Shrigley"
@@ -134,6 +135,82 @@
                 return element;
             }
         });
+        const newBtn = document.getElementById('new-row');
+        newBtn.addEventListener("click", function() {
+            const id = 5000 + Math.floor(Math.random() * 1000);
+            let newModel = {
+                id: id,
+                label: `Task #${id}`,
+                headerHtml: '<input type="text">',
+                // contentHtml: '<input type="text">'
+            }
+            gantt.insertRow(newModel, 4);
+        });
+
+        const addButton = document.querySelectorAll('button[data-add-row]');
+        addButton.forEach(button => {
+            button.addEventListener("click", function() {
+                let after = this.getAttribute('data-add-row');
+                const id = 5000 + Math.floor(Math.random() * 1000);
+                let newModel = {
+                    id: `temp${id}`,
+                    label: `Task #${id}`,
+                    headerHtml: `<button class="btn" data-delete-row="temp${id}"><i class="bi bi-trash"></i></button>`,
+                }
+                console.log('click', this, newModel, parseInt(after));
+
+                const promise1 = new Promise((resolve, reject) => {
+                    gantt.insertChildRow(newModel, after, after);
+                    resolve('Success!');
+                });
+
+                promise1.then(res => {
+                    addDeleteFunction();
+                });
+
+            });
+        });
+
+        function addDeleteFunction() {
+            const deleteButton = document.querySelectorAll('button[data-delete-row]');
+            console.log(deleteButton);
+            deleteButton.forEach(button => {
+                console.log('button', button);
+                 button.removeEventListener("click", deleteRow);
+                button.addEventListener("click", deleteRow);
+            });
+        }
+        function deleteRow() {
+                let rowId = this.getAttribute('data-delete-row');
+
+                console.log('delete', rowId);
+                gantt.deleteRow(rowId);
+
+        }
+
+
+
+        // const externalRow = new SvelteGanttExternal(document.getElementById('new-row'), {
+        //     gantt,
+        //     onsuccess: (row, date, gantt) => {
+        //         console.log(row.model.id, new Date(date).toISOString())
+        //         // const id = 5000 + Math.floor(Math.random() * 1000);
+        //         // gantt.updateTask({
+        //         //     id,
+        //         //     label: `Task #${id}`,
+        //         //     from: date,
+        //         //     to: date + 3 * 60 * 60 * 1000,
+        //         //     classes: colors[(Math.random() * colors.length) | 0],
+        //         //     resourceId: row.model.id
+        //         // });
+        //     },
+        //     elementContent: () => {
+        //         // const element = document.createElement('div');
+        //         // element.innerHTML = 'New Task';
+        //         // element.className = 'sg-external-indicator';
+        //         // return element;
+        //     }
+        // });
     });
 
     function onChangeOptions(event) {
@@ -166,10 +243,23 @@
         margin: 0.5rem;
         cursor: grab;
     }
+    #new-row {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 1;
+        background-color: #ee6e73;
+        color: white;
+        padding: 1rem;
+        margin: 0.5rem;
+        margin-right: 10rem;
+        cursor: grab;
+    }
 </style>
 
 <div class="container">
     <div id="example-gantt"></div>
     <div id="new-task">Drag to gantt</div>
+    <div id="new-row">Add Row</div>
     <GanttOptions options={options} on:change={onChangeOptions}/>
 </div>
