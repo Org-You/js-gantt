@@ -2,6 +2,7 @@ export class GanttApi {
     listeners: any[];
     listenersMap: { [key: string]: any; };
     tasks?: any;
+    rows?: any;
     timeranges?: any;
 
     constructor() {

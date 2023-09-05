@@ -1,12 +1,24 @@
 <script lang="ts">
     import type { SvelteRow } from '../core/row';
     import { getContext } from 'svelte';
+    import {
+        GanttContext,
+        GanttContextOptions,
+        GanttContextServices
+    } from "../gantt";
+
     export let row: SvelteRow;
-    const { rowHeight } = getContext('options');
-    const { hoveredRow, selectedRow } = getContext('gantt');
+    const { rowHeight } : GanttContextOptions = getContext('options');
+    const { hoveredRow, selectedRow } : GanttContext = getContext('gantt');
+    const { api } : GanttContextServices = getContext('services');
 </script>
 
-<div class="sg-row {row.model.classes}" data-row-id="{row.model.id}" class:sg-hover={$hoveredRow == row.model.id} class:sg-selected={$selectedRow == row.model.id} style="height:{$rowHeight}px">
+<div class="sg-row {row.model.classes}"
+     data-row-id="{row.model.id}"
+     on:dblclick={() => {api.rows.raise.dblclicked(row.model)}}
+     class:sg-hover={$hoveredRow == row.model.id}
+     class:sg-selected={$selectedRow == row.model.id}
+     style="height:{$rowHeight}px">
     {#if row.model.contentHtml}
         {@html row.model.contentHtml}
     {/if}

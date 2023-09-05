@@ -21,8 +21,7 @@
             label: "Business Development",
         }, {
             id: 3,
-            label: "Ida Flewan",
-            headerHtml: ' <span>Ida Flewan</span> <button class="btn" data-add-row="3"><i class="bi bi-plus-circle"></i></button>',
+            label: "Ida Flewan"
         }, {
             id: 4,
             label: "Lauréna Shrigley"
@@ -36,28 +35,32 @@
             label: "PET-CT",
             from: time("13:30"),
             to: time("15:00"),
-            classes: "orange"
+            classes: "orange",
+            moveRow: false,
         }, {
             id: 4,
             resourceId: 1,
             label: "Auditing",
             from: time("9:30"),
             to: time("11:30"),
-            classes: "orange"
+            classes: "orange",
+            moveRow: false,
         }, {
             id: 5,
             resourceId: 2,
             label: "Security Clearance",
             from: time("15:15"),
             to: time("16:00"),
-            classes: "green"
+            classes: "green",
+            moveRow: false,
         }, {
             id: 6,
             resourceId: 2,
             label: "Policy Analysis",
             from: time("14:00"),
             to: time("17:00"),
-            classes: "blue"
+            classes: "blue",
+            moveRow: false,
         }, {
             id: 7,
             resourceId: 2,
@@ -71,21 +74,24 @@
             label: "GNU/Linux",
             from: time("14:00"),
             to: time("15:30"),
-            classes: "blue"
+            classes: "blue",
+            moveRow: false,
         }, {
             id: 9,
             resourceId: 4,
             label: "Electronic Trading",
             from: time("15:00"),
             to: time("17:00"),
-            classes: "green"
+            classes: "green",
+            moveRow: false,
         }, {
             id: 10,
             resourceId: 5,
             label: "Alternative Medicine",
             from: time("14:30"),
             to: time("15:30"),
-            classes: "orange"
+            classes: "orange",
+            moveRow: false,
         }],
         dependencies: []
     }
@@ -169,6 +175,10 @@
                 });
 
             });
+        });
+
+        gantt.api.rows.on.dblclicked(function (row) {
+            console.log('Listener: row dblclicked', row);
         });
 
         function addDeleteFunction() {

@@ -256,6 +256,9 @@
             mainHeaderContainer
         });
 
+        api.registerEvent('rows', 'clicked');
+        api.registerEvent('rows', 'dblclicked');
+        api.registerEvent('rows', 'select');
         api.registerEvent('tasks', 'move');
         api.registerEvent('tasks', 'select');
         api.registerEvent('tasks', 'switchRow');
