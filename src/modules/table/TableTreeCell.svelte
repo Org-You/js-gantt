@@ -17,16 +17,30 @@
 </script>
 
 <div class="sg-cell-inner" style="padding-left: {row.childLevel*3}em">
-    {#if row.children}
-        <div class="sg-tree-expander" on:click="{onExpandToggle}">
-            {#if row.expanded}
-                <i class="bi bi-caret-down-fill"></i>
-            {:else}
-                <i class="bi bi-caret-right-fill"></i>
-            {/if}
-        </div>
+    {#if !row.expanderRight}
+        {#if row.children}
+            <div class="sg-tree-expander" on:click="{onExpandToggle}">
+                {#if row.expanded}
+                    <i class="bi bi-caret-down-fill"></i>
+                {:else}
+                    <i class="bi bi-caret-right-fill"></i>
+                {/if}
+            </div>
+        {/if}
+        <slot></slot>
+    {:else}
+        <slot></slot>
+        {#if row.children}
+            <div class="sg-tree-expander" on:click="{onExpandToggle}">
+                {#if row.expanded}
+                    <i class="bi bi-caret-down-fill"></i>
+                {:else}
+                    <i class="bi bi-caret-right-fill"></i>
+                {/if}
+            </div>
+        {/if}
     {/if}
-    <slot></slot>
+
 </div>
 
 <style>

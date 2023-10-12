@@ -13,7 +13,8 @@ export interface RowModel {
     iconClass?: string;
     /** Url of image in row header */
     imageSrc?: string;
-    expanded?:boolean
+    expanded?:boolean;
+    expanderRight?:boolean;
 }
 
 export interface SvelteRow {
@@ -27,6 +28,7 @@ export interface SvelteRow {
     parent?: SvelteRow;
     allParents?: SvelteRow[];
     expanded?: boolean;
+    expanderRight?: boolean;
     childLevel?: number;
     entities?:any;
 }
@@ -54,7 +56,8 @@ export class RowFactory {
             model: row,
             y,
             height,
-            expanded: true
+            expanded: true,
+            expanderRight: true
         }
     }
 
