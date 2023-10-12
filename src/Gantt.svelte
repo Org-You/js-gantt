@@ -215,7 +215,7 @@
                 to:period.to,
                 left:left,
                 duration:period.duration,
-                ...(period.isHighlighted && {'bgHighlightColor': highlightColor})
+                ...(period.isHighlighted && {'bgHighlightColor': highlightColor, 'bgHighlightClass': highlightClass})
             })
         })
         return cols;

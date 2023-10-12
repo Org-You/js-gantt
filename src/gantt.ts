@@ -49,6 +49,8 @@ export interface GanttContextServices {
 export interface GanttContextOptions {
     dateAdapter: SvelteGanttDateAdapter;
     taskElementHook?: TaskElementHook;
+    rowElementHook?: RowElementHook;
+    rowHeadElementHook?: RowHeadElementHook;
     taskContent?: TaskContentTemplate;
     rowPadding: Writable<number>;
     rowHeight: Writable<number>;
@@ -72,6 +74,8 @@ interface highlightedDurations {
 type TaskButtonClickHandler = (task: SvelteTask) => void;
 type TaskContentTemplate = (task: SvelteTask) => string;
 type TaskElementHook = (task: SvelteTask, element: HTMLElement) => void;
+type RowElementHook = (row: SvelteRow, element: HTMLElement) => void;
+type RowHeadElementHook = (row: SvelteRow, element: HTMLElement) => void;
 
 export interface SvelteGanttOptions {
     /**
@@ -148,6 +152,12 @@ export interface SvelteGanttOptions {
 	taskContent?: TaskContentTemplate; // e.g. (task) => '<div>Custom task content</div>'
     /** task element hook */
     taskElementHook?: (node: HTMLElement, task: SvelteTask) => { update?(task), destroy?() }
+
+    /** row element hook */
+    rowElementHook?: (node: HTMLElement, row: SvelteRow) => { update?(row), destroy?() }
+
+    /** row element hook */
+    rowHeadElementHook?: (node: HTMLElement, row: SvelteRow) => { update?(row), destroy?() }
     /**
      * Width of table, used with SvelteGanttTable module
      */
@@ -182,4 +192,5 @@ export interface SvelteGanttComponent extends Component<SvelteGanttOptions> {
     getTask(id): SvelteTask;
     getTasks(resourceId): SvelteTask[];
     getRow(id): SvelteRow;
+    insertRow():SvelteRow;
 }
