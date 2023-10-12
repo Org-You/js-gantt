@@ -4,12 +4,13 @@
     import TableTreeCell from './TableTreeCell.svelte';
     import type { TableHeader } from './tableHeader';
     import type { SvelteRow } from '../../core/row';
+    import {GanttContext, GanttContextOptions} from "../../gantt";
 
     export let headers: TableHeader[] = null;
     export let row: SvelteRow = null;
 
-    const { rowHeight } = getContext('options');
-    const { hoveredRow, selectedRow } = getContext('gantt');
+    const { rowHeight, rowHeadElementHook } : GanttContextOptions = getContext('options');
+    const { hoveredRow, selectedRow } : GanttContext = getContext('gantt');
 
     const dispatch = createEventDispatcher();
 
@@ -22,13 +23,25 @@
         if(row.model.expanded == false) dispatch('rowCollapsed', { row });
     })
 
+
+    function rowHeadElement(node, model) {
+        if(node && node.getBoundingClientRect().x == 0 && node.getBoundingClientRect().width == 0){
+            node = <HTMLElement> document.querySelector('[data-row-id="'+node.dataset.taskId+'"]')
+            console.log('NODE AFTER', node, node.getBoundingClientRect())
+        }
+        if(rowHeadElementHook) {
+            return rowHeadElementHook(node, model);
+        }
+    }
 </script>
 
-<div data-row-id={row.model.id} 
-    style="height:{$rowHeight}px" 
-    class="sg-table-row {row.model.classes || ''}" 
-    class:sg-row-expanded="{row.expanded}" 
-    class:sg-hover={$hoveredRow == row.model.id} 
+<div data-row-id={row.model.id}
+    style="height:{$rowHeight}px"
+    class="sg-table-row {row.model.classes || ''}"
+     on:keypress={()=>{}}
+     use:rowHeadElement={row}
+    class:sg-row-expanded="{row.expanded}"
+    class:sg-hover={$hoveredRow == row.model.id}
     class:sg-selected={$selectedRow == row.model.id}>
     {#each headers as header}
         <div class="sg-table-body-cell sg-table-cell" style="width:{header.width}px">

@@ -129,6 +129,8 @@
     export let highlightColor = "#6eb859";
 
     export let taskElementHook = null;
+    export let rowElementHook = null;
+    export let rowHeadElementHook = null;
 
     const visibleWidth = writable<number>(null);
     const visibleHeight = writable<number>(null);
@@ -230,6 +232,8 @@
     setContext('options', {
         dateAdapter,
         taskElementHook,
+        rowElementHook,
+        rowHeadElementHook,
         taskContent,
         rowPadding: _rowPadding,
         rowHeight: _rowHeight,
