@@ -34,6 +34,7 @@
                         from: period.from,
                         to: period.to,
                         left: left,
+                        ...(period.isHighlighted && {'bgHighlightColor': window.gantt.highlightColor, 'bgHighlightClass': window.gantt.highlightClass})
                     }
                 });
             }
@@ -43,7 +44,7 @@
 <div class="column-header-row">
     {#each header.columns as _header}
         <!-- svelte-ignore a11y-click-events-have-key-events -->
-        <div class="column-header-cell" class:sticky={header.sticky} style="left:{_header.left}px;width:{_header.width}px" on:click="{() => dispatch('dateSelected', { from: _header.from, to: _header.to, unit: header.unit })}">
+        <div class="column-header-cell {_header.bgHighlightClass}" class:sticky={header.sticky} style="left:{_header.left}px;width:{_header.width}px;background-color: {_header.bgHighlightColor || ''};" on:click="{() => dispatch('dateSelected', { from: _header.from, to: _header.to, unit: header.unit })}">
             <div class="column-header-cell-label">{_header.label || 'N/A'}</div>
         </div>
     {/each}

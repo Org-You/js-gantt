@@ -127,6 +127,7 @@
 
     export let highlightedDurations;
     export let highlightColor = "#6eb859";
+    export let highlightClass = "";
 
     export let taskElementHook = null;
     export let rowElementHook = null;

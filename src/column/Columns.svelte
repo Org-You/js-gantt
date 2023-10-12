@@ -11,7 +11,7 @@
 
 <div class="sg-columns">
 	{#each columns as column}
-        <div class="sg-column" style="
+        <div class="sg-column {column.bgHighlightClass ?? ''}" style="
             border-right: {column.bgHighlightColor ? 0 : columnStrokeWidth}px solid {column.bgHighlightColor || columnStrokeColor};
             left: {column.left}px; 
             width: {column.width}px; 

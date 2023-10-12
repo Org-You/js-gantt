@@ -6,6 +6,7 @@ export interface Column {
     left: number;
     width: number;
     bgHighlightColor?: boolean;
+    bgHighlightClass?: boolean;
 
     /**
      * Duration in milliseconds
