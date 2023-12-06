@@ -1,15 +1,21 @@
 <script>
-    import { createEventDispatcher } from 'svelte';
+    import {createEventDispatcher, getContext} from 'svelte';
 
     const dispatch = createEventDispatcher();
 
     import { Draggable } from '../core/drag';
     import { setCursor } from '../utils/domUtils';
 
+    const { visibleWidth } = getContext('dimensions');
+    const { mainContainer } = getContext('gantt');
+
     export let x;
+    export let min;
+    export let max;
     export let container;
-    
+
     let dragging = false;
+
     const dragOptions = {
         onDrag: (event) => {
             x = event.x, dragging = true;
@@ -20,10 +26,10 @@
             x = event.x, dragging = false;
             dispatch('resize', { left: x });
             setCursor('default');
-        }, 
+        },
         dragAllowed: true,
         resizeAllowed: false,
-        container: container, 
+        container: container,
         getX: () => x,
         getY: () => 0,
         getWidth: () => 0
@@ -34,9 +40,23 @@
     function resizer(node) {
         return new Draggable(node, dragOptions, 'resizer');
     }
+
+    function minLeft(x) {
+        if (min && min >= x) {
+            return min;
+        } else if (max && $visibleWidth <= max) {
+            if (!container) {
+                return x;
+            }
+            return container.clientWidth - max - 7;
+        } else {
+            return x;
+        }
+    }
+
 </script>
 
-<div class="sg-resize" style="left:{x}px" use:resizer></div>
+<div class="sg-resize" style="left:{minLeft(x)}px " use:resizer></div>
 <style>
     .sg-resize {
         z-index: 2;

@@ -11,7 +11,7 @@
     const { dateAdapter }: { dateAdapter: SvelteGanttDateAdapter } = getContext('options');
 
     export let header;
-    
+
     export let ganttBodyColumns;
     export let ganttBodyUnit;
 
@@ -67,16 +67,16 @@
         text-align: center;
 
         display: inline-flex;
-        
+
         justify-content: center;
         align-items: center;
 
-        font-size: 1em;    
+        font-size: 1em;
         font-size: 14px;
         font-weight: 300;
         transition: background 0.2s;
 
-        cursor: pointer;     
+        cursor: pointer;
         user-select: none;
 
         border-right: #efefef 1px solid;

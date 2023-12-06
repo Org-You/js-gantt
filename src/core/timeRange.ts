@@ -8,6 +8,7 @@ export interface TimeRangeModel {
     classes?: string | string[];
     label?: string;
     enableResizing?: boolean;
+    hoverTitle?: string;
 }
 
 export interface SvelteTimeRange {
@@ -15,6 +16,11 @@ export interface SvelteTimeRange {
     left: number;
     width: number;
     resizing: boolean;
+
+    //Only for EntityType
+    hidden?: boolean;
+    height: number;
+    y: number;
 }
 
 export class TimeRangeFactory {
@@ -29,13 +35,16 @@ export class TimeRangeFactory {
         model.enableResizing = model.enableResizing === undefined ? true : model.enableResizing;
 
         const left = this.columnService.getPositionByDate(model.from);
-        const right = this.columnService.getPositionByDate(model.to); 
+        const right = this.columnService.getPositionByDate(model.to);
 
         return {
             model,
             left: left,
             width: right-left,
-            resizing: false
+            resizing: false,
+            height: 0,
+            y: 0
         }
     }
 }
+

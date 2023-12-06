@@ -34,7 +34,7 @@
     let headerContainer;
     function scrollListener(node) {
         scrollables.push({ node, orientation: "vertical" });
-        
+
         node.addEventListener("scroll", event => {
             headerContainer.scrollLeft = node.scrollLeft;
         });
@@ -45,7 +45,7 @@
             }
         };
     }
-    
+
     let scrollWidth;
     $: {
         let sum = 0;
@@ -85,7 +85,40 @@
             const task = $taskStore.entities[id];
             const row = $rowStore.entities[task.model.resourceId];
             $taskStore.entities[id].top = row.y + $rowPadding;
+            $taskStore.entities[id].height = getTaskHeight(task.model);
         });
+    }
+
+    function getTaskHeight(model){
+        let row = $rowStore.entities[model.resourceId];
+        if (model.extendMultiRow && row.expanded) {
+            return (row.height * (childRowCount(model.resourceId) + 1)) - (2 * $rowPadding);
+        } else {
+            return row.height - 2 * $rowPadding;
+        }
+    }
+
+    function childRowCount(resourceId) {
+        let childCount = 0;
+        let row = $rowStore.entities[resourceId];
+        childCount += rowCount(row);
+        return childCount;
+    }
+
+    function rowCount(row) {
+        let childCount = 0;
+        let children = row.children;
+
+        if (children && children.length > 0) {
+            childCount += children.length;
+
+            for (let i = 0; i < children.length; i++) {
+                let row = children[i];
+                childCount += rowCount(row);
+            }
+        }
+
+        return childCount;
     }
 
     function hide(children) {
@@ -108,21 +141,25 @@
     let bottomScrollbarVisible;
     $: {
         bottomScrollbarVisible = $width > $visibleWidth && scrollWidth <= tableWidth;
-    } 
+    }
 </script>
 
 <div class="sg-table sg-view" style="width:{tableWidth}px;">
     <div class="sg-table-header" style="height:{$headerHeight}px" bind:this={headerContainer}>
         {#each tableHeaders as header}
             <div class="sg-table-header-cell sg-table-cell" style="width:{header.width}px">
-                {header.title}
+                {#if header.titleHtml}
+                    {@html header.titleHtml}
+                {:else}
+                    {header.title}
+                {/if}
             </div>
         {/each}
     </div>
 
     <div class="sg-table-body" class:bottom-scrollbar-visible="{bottomScrollbarVisible}">
         <div class="sg-table-scroller" use:scrollListener>
-            <div class="sg-table-rows" style="padding-top:{paddingTop}px;padding-bottom:{paddingBottom}px;height:{rowContainerHeight}px;"> 
+            <div class="sg-table-rows" style="padding-top:{paddingTop}px;padding-bottom:{paddingBottom}px;height:{rowContainerHeight}px;">
                 {#each visibleRows as row}
                     <TableRow
                         row={row}
@@ -149,7 +186,7 @@
 
     .sg-table-scroller {
         width: 100%;
-        border-bottom: 1px solid #efefef; 
+        border-bottom: 1px solid #efefef;
         overflow-y: hidden;
     }
 
@@ -162,7 +199,7 @@
     }
 
     .sg-table-rows {
-        
+
     }
 
     .sg-table-body {
@@ -180,7 +217,7 @@
     :global(.sg-table-cell){
         white-space: nowrap;
         overflow: hidden;
-        
+
         display: flex;
         align-items: center;
         flex-shrink: 0;
@@ -188,7 +225,7 @@
         padding: 0 .5em;
         height: 100%;
     }
-    
+
     :global(.sg-table-cell:last-child) {
         flex-grow: 1;
     }

@@ -25,7 +25,7 @@ export function findByDate(columns: Column[], x: any) {
 }
 
 export interface ColumnService {
-    
+
     getColumnByDate(date): Column;
 
     getColumnByPosition(x): Column;

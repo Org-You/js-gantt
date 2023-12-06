@@ -11,7 +11,7 @@
     export let model;
     export let width;
     export let left;
-    
+
     const _position = {
         width,
         x: left
@@ -22,11 +22,11 @@
 
     function drag(node) {
         const ondrop = (event) => {
-            const newFrom = utils.roundTo(columnService.getDateByPosition(event.x)); 
+            const newFrom = utils.roundTo(columnService.getDateByPosition(event.x));
             const newTo = utils.roundTo(columnService.getDateByPosition(event.x + event.width));
             const newLeft = columnService.getPositionByDate(newFrom);
             const newRight = columnService.getPositionByDate(newTo);
-            
+
             Object.assign(model, {
                 from: newFrom,
                 to: newTo
@@ -57,7 +57,7 @@
                     model,
                     resizing: true
                 });
-            }, 
+            },
             onResize: (event) => {
                 api.timeranges.raise.resized({model, left:event.x, width:event.width});
                 update({
@@ -69,8 +69,8 @@
             },
             dragAllowed: false,
             resizeAllowed: true,
-            onDrop: ondrop, 
-            container: rowContainer, 
+            onDrop: ondrop,
+            container: rowContainer,
             resizeHandleWidth,
             getX: () => _position.x,
             getY: () => 0,
@@ -86,7 +86,7 @@
     }
 </script>
 
-<div class="sg-time-range-control" style="width:{_position.width}px;left:{_position.x}px" use:setClass>
+<div class="sg-time-range-control" style="width:{_position.width}px;left:{_position.x}px;" use:setClass title="{model.hoverTitle}">
     <div class="sg-time-range-handle-left" use:drag></div>
     <div class="sg-time-range-handle-right" use:drag></div>
 </div>

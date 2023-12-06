@@ -35,7 +35,7 @@
     {#if row.model.contentHtml}
         {@html row.model.contentHtml}
     {/if}
-</div>    
+</div>
 <style>
     .sg-row {
         position: relative;

@@ -395,8 +395,6 @@
                 const after = before * scale;
                 const scrollLeft = after - mousepos.x + node.clientWidth / 2;
 
-                console.log('scrollLeft', scrollLeft);
-
                 columnUnit = options.columnUnit;
                 columnOffset = options.columnOffset;
                 $_minWidth = options.minWidth;
@@ -612,7 +610,13 @@
     }
 
     export function updateRow(model) {
-        const row = rowFactory.createRow(model, null);
+        const oldRow = getRow(model.id);
+        const row = rowFactory.createRow(model, oldRow.y);
+        row.childLevel = oldRow.childLevel;
+        row.parent = oldRow.parent;
+        row.allParents = oldRow.allParents;
+        row.allChildren = oldRow.allChildren;
+        row.entities = oldRow.entities;
         rowStore.upsert(row);
     }
 
@@ -636,6 +640,7 @@
         const rows = rowFactory.updateRows($allRows);
         rowStore.upsertAll(rows);
 
+        taskFactory.rowEntities = $rowStore.entities;
         // Update Tasks
         taskFactory.updateTasks($allTasks);
     }
@@ -644,33 +649,61 @@
         // Get Parent Row
         let parentRow = getRow(parentId);
 
-        // Create new Row
-        const row = rowFactory.createRow(model, null);
+        const row = rowFactory.createRow(model, parentRow.y + parentRow.height);
 
         // Add new Row to Parent
         if ( !parentRow.model.children) {
             parentRow.model.children = [];
         }
-        parentRow.model.children = [...parentRow.model.children, model];
-        parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
 
-        // Add Parent to Row
         row.childLevel = parentRow.childLevel + 1;
         row.parent = parentRow;
         row.allParents = row.allParents ? [...row.allParents, parentRow] : [parentRow];
 
-        // Insert new Row
+        // Add Parent to Row
+        parentRow.model.children = [...parentRow.model.children, model];
+        parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
+        parentRow.allChildren = parentRow.allChildren ? [...parentRow.allChildren, row] : [row];
+
         rowStore.insertAt(row, afterId);
 
+        taskFactory.rowEntities = $rowStore.entities;
         // Update Tasks
         taskFactory.updateTasks($allTasks);
     }
 
     export function deleteRow(rowId:number|string) {
+
+        let row = getRow(rowId);
+        if (row.allParents) {
+            for (let i = 0; i < row.allParents.length; i++) {
+                let parentRow = row.allParents[i];
+
+                const indexModel = parentRow.model.children.indexOf(row.model);
+                if (indexModel > -1) {
+                    parentRow.model.children.splice(indexModel, 1);
+                }
+
+                const indexChild = parentRow.children.indexOf(row);
+                if (indexChild > -1) {
+                    parentRow.children.splice(indexChild, 1);
+                } else {
+
+                    for (let j = 0; j < parentRow.children.length; j++) {
+                        let childRow = parentRow.children[j]
+                        if (childRow.model.id === row.model.id) {
+                            parentRow.children.splice(j, 1);
+                         break;
+                        }
+                    }
+                }
+            }
+        }
+
         rowStore.remove(rowId);
+        rowStore.refresh();
 
-        console.log($allRows);
-
+        taskFactory.rowEntities = $rowStore.entities;
         // Update Tasks
         taskFactory.updateTasks($allTasks);
     }

@@ -100,7 +100,7 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
                     insertIndex = ids.indexOf(removeId);
                 }
             }
-            console.log(ids, insertIndex, removeId);
+
             if (insertIndex !== -1) {
                 ids = ids.filter(i => i !== removeId);
                 delete entities[removeId];
@@ -123,6 +123,7 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
         }),
         delete: (id: number | string) => update(state => {
             const { [id]: _, ...entities } = state.entities;
+
             return {
                 ids: state.ids.filter(i => i !== id),
                 entities
@@ -131,13 +132,13 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
         deleteAll: (ids: (number | string)[]) => update(state => {
             const entities = { ...state.entities };
             const idSet = new Set(ids);
-        
+
             for (let i = 0; i < state.ids.length; i++) {
                 if (idSet.has(state.ids[i])) {
                     delete entities[state.ids[i]];
                 }
             }
-        
+
             return {
                 ids: state.ids.filter(i => !idSet.has(i)),
                 entities
@@ -171,7 +172,7 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
                 }
                 entities[items[i].model.id] = items[i];
             }
-            
+
             return {
                 ids,
                 entities
@@ -196,7 +197,7 @@ export const taskStore = createEntityStore<SvelteTask>();
 export const rowStore = createEntityStore<SvelteRow>();
 export const timeRangeStore = createEntityStore<SvelteTimeRange>();
 
-export const allTasks = all(taskStore);
+export const allTasks = all<SvelteTask>(taskStore);
 export const allRows = all(rowStore);
 export const allTimeRanges = all(timeRangeStore);
 
