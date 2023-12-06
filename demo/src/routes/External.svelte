@@ -9,7 +9,7 @@
     const currentEnd = time('18:00');
 
     const colors = ['blue', 'green', 'orange']
-    
+
     let options2 = getContext('options');
 
     export const data = {
@@ -21,7 +21,8 @@
             label: "Business Development",
         }, {
             id: 3,
-            label: "Ida Flewan"
+            label: "Ida Flewan",
+            headerHtml: 'Ida <button data-add-row="3"><i class="fas fa-calculator"></i></button>'
         }, {
             id: 4,
             label: "Lauréna Shrigley"
@@ -67,7 +68,8 @@
             label: "Xbox 360",
             from: time("13:00"),
             to: time("14:00"),
-            classes: "blue"
+            classes: "blue",
+            "extendMultiRow": true
         }, {
             id: 8,
             resourceId: 3,
@@ -114,7 +116,64 @@
         tableHeaders: [{ title: 'Label', property: 'label', width: 140, type: 'tree' }],
         tableWidth: 240,
         ganttTableModules: [SvelteGanttTable],
-        ganttBodyModules: [SvelteGanttDependencies]
+        ganttBodyModules: [SvelteGanttDependencies],
+
+        rowHeadElementHook: (node, row) => {
+            function onClick(event) {
+                let eventTarget = event.target;
+                let addAttr = eventTarget.getAttribute('data-add-row');
+                let deleteAttr = eventTarget.getAttribute('data-delete-row');
+                let changeAttr = eventTarget.getAttribute('data-row-change-order');
+
+                console.log('clicked Head on: ', node, row, eventTarget, addAttr, deleteAttr, changeAttr);
+
+                if (addAttr && typeof addAttr !== 'undefined' && addAttr !== false) {
+                    // Fügt Zeile hinzu, auch in der Datenbank und öffnet Popup zum ändern
+                    console.log('OY - add Row');
+                    event.stopPropagation();
+                    let after = eventTarget.getAttribute('data-add-row');
+                    const id = 5000 + Math.floor(Math.random() * 1000);
+
+                    let newModel = {
+                        id: `temp${id}`,
+                        tempId: `temp${id}`,
+                        subjectId: null,
+                        label: `Task #${id}`,
+                        headerHtml: `<span data-row-change-order="temp${id}">temp${id}</span>`
+                    }
+
+                    const promise1 = new Promise((resolve, reject) => {
+                        gantt.insertChildRow(newModel, after, after);
+                        resolve('Success!');
+                    });
+
+                    promise1.then(res => {
+                        let getRow = gantt.getRow(`temp${id}`);
+
+                        gantt.updateRow(getRow.model)
+                    });
+
+                } else if (deleteAttr && typeof deleteAttr !== 'undefined' && deleteAttr !== false) {
+
+                    // Löscht Zeile, auch in der Datenbank
+                    console.log('OY - delete Row');
+                    let rowId = eventTarget.getAttribute('data-delete-row');
+                    gantt.deleteRow(rowId);
+                } else if (changeAttr && typeof changeAttr !== 'undefined' && changeAttr !== false) {
+
+                    let getRow = gantt.getRow(changeAttr);
+                    console.log('OY - change Row', row, getRow);
+                }
+            }
+
+            node.addEventListener('click', onClick);
+
+            return {
+                destroy() {
+                    node.removeEventListener('click', onClick);
+                }
+            }
+        }
     }
 
     let gantt;
@@ -153,29 +212,27 @@
             gantt.insertRow(newModel, 4);
         });
 
-        const addButton = document.querySelectorAll('button[data-add-row]');
-        addButton.forEach(button => {
-            button.addEventListener("click", function() {
-                let after = this.getAttribute('data-add-row');
-                const id = 5000 + Math.floor(Math.random() * 1000);
-                let newModel = {
-                    id: `temp${id}`,
-                    label: `Task #${id}`,
-                    headerHtml: `<button class="btn" data-delete-row="temp${id}"><i class="bi bi-trash"></i></button>`,
-                }
-                console.log('click', this, newModel, parseInt(after));
-
-                const promise1 = new Promise((resolve, reject) => {
-                    gantt.insertChildRow(newModel, after, after);
-                    resolve('Success!');
-                });
-
-                promise1.then(res => {
-                    addDeleteFunction();
-                });
-
-            });
-        });
+		// gantt.api.registerEvent('click', 'button[data-add-row]')
+        // const addButton = document.querySelectorAll('button[data-add-row]');
+        // addButton.forEach(button => {
+        //     button.addEventListener("click", function() {
+        //         let after = this.getAttribute('data-add-row');
+        //         const id = 5000 + Math.floor(Math.random() * 1000);
+        //         let newModel = {
+        //             id: `temp${id}`,
+        //             label: `Task #${id}`,
+        //             //headerHtml: `<button class="btn" data-delete-row="temp${id}"><i class="bi bi-trash"></i></button>`,
+        //         }
+        //         console.log('click', this, newModel, parseInt(after));
+        //
+        //         gantt.insertChildRow(newModel, after, after);
+        //
+        //         // promise1.then(res => {
+        //         //     addDeleteFunction();
+        //         // });
+        //
+        //     });
+        // });
 
         gantt.api.rows.on.dblclicked(function (row) {
             console.log('Listener: row dblclicked', row);

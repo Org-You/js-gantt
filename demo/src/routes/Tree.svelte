@@ -27,7 +27,7 @@
         }
     ];
 
-    
+
     let options2 = getContext('options');
 
     export const data = {
@@ -38,7 +38,11 @@
             iconClass: 'fas fa-calculator',
             children: [{
                 id: 11,
-                label: "Petunia Mulliner"
+                label: "Petunia Mulliner",
+				children: [{
+					id: 40,
+					label: "Petunia Mulliner"
+				}]
             }, {
                 id: 12,
                 label: "Mélina Giacovetti"
@@ -48,7 +52,8 @@
             }, {
                 id: 14,
                 label: "Adda Youell"
-            }]
+            }],
+            expanderRight: true
         }, {
             id: 20,
             label: "Business Development",
@@ -75,13 +80,21 @@
             label: "Ange Kembry"
         }],
         tasks: [{
-            "id": 1,
-            "resourceId": 11,
-            "label": "LPCVD",
-            "from": time("9:00"),
-            "to": time("11:00"),
-            "classes": "orange"
-        }, {
+			"id": 1123,
+			"resourceId": 10,
+			"label": "Test",
+			"from": time("9:00"),
+			"to": time("11:00"),
+			"classes": "orange",
+            "extendMultiRow": true
+		},{
+			"id": 1,
+			"resourceId": 11,
+			"label": "LPCVD",
+			"from": time("9:00"),
+			"to": time("11:00"),
+			"classes": "orange"
+		}, {
             "id": 2,
             "resourceId": 12,
             "label": "Entrepreneurship",
@@ -166,7 +179,9 @@
         tableHeaders: [{ title: 'Label', property: 'label', width: 140, type: 'tree' }],
         tableWidth: 240,
         ganttTableModules: [SvelteGanttTable],
-        ganttBodyModules: [SvelteGanttDependencies]
+        ganttBodyModules: [SvelteGanttDependencies],
+        reflectOnParentRows: true,
+        reflectOnChildRows: false,
     }
 
     let gantt;

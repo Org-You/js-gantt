@@ -5,8 +5,11 @@
     import moment from 'moment';
     import GanttOptions from '../components/GanttOptions.svelte';
 
-    const currentStart = time('06:00');
-    const currentEnd = time('18:00');
+    //const currentStart = time('06:00');
+    //const currentEnd = time('18:00');
+	const currentStart = new Date('2023-05-01').getTime();
+	const currentEnd = new Date('2023-12-31').getTime();
+	const colors = ['blue', 'green', 'orange'];
 
     export const data = {
         rows: [{
@@ -17,20 +20,27 @@
             label: "Business Development",
         }, {
             id: 3,
-            label: "Ida Flewan"
+            label: "Ida Flewan",
+            children: []
         }, {
             id: 4,
-            label: "Lauréna Shrigley"
+            label: "Lauréna Shrigley",
+            expanderRight: false,
+            children: []
         }, {
             id: 5,
-            label: "Ange Kembry"
+            label: "Ange Kembry",
+            headerHtml: '<div>Lars</div>',
+            extraHeaderHtml:'<div>B.</div>',
+            expanderRight: true,
+            children: []
         }],
         tasks: [{
             id: 3,
             resourceId: 1,
             label: "PET-CT",
-            from: time("13:30"),
-            to: time("15:00"),
+            from: time("00:00"),
+            to: time("23:00"),
             classes: "orange",
             moveRow: false,
         }, {
@@ -93,25 +103,70 @@
         dependencies: []
     }
 
+	var event = new Date('2023-10-03 00:00:00');
+	var event11 = new Date('2023-10-03 00:00:00');
+	event11.setDate(event11.getDate() + 1);
+	var event2 = new Date('2023-10-31 00:00:00');
+	var event21 = new Date('2023-10-31 00:00:00');
+     event21.setDate(event21.getDate() + 1);
+	const holiday = [
+		{
+			id: 0,
+			from: event.getTime(),
+			to: event11.getTime(),
+			classes: 'test-class',
+            hoverTitle: 'testTitle'
+		},
+		{
+			id: 1,
+			from: event2.getTime(),
+			to: event21.getTime(),
+			classes: null
+		},
+	];
+
     let options = {
-        dateAdapter: new MomentSvelteGanttDateAdapter(moment),
-        rows: data.rows,
-        tasks: data.tasks,
-        dependencies: data.dependencies,
-        timeRanges: [],
-        columnOffset: 15,
-        magnetOffset: 15,
-        rowHeight: 52,
-        rowPadding: 6,
-        headers: [{ unit: 'day', format: 'MMMM Do' }, { unit: 'hour', format: 'H:mm' }],
-        fitWidth: true,
-        minWidth: 800,
-        from: currentStart,
-        to: currentEnd,
-        tableHeaders: [{ title: 'Label', property: 'label', width: 140, type: 'tree' }],
-        tableWidth: 240,
-        ganttTableModules: [SvelteGanttTable],
-        ganttBodyModules: [SvelteGanttDependencies],
+		dateAdapter: new MomentSvelteGanttDateAdapter(moment),
+		from: currentStart,
+		to: currentEnd,
+		rows: data.rows,
+		tasks: data.tasks,
+		dependencies: [],
+		timeRanges: holiday,
+		reflectOnParentRows: false,
+		reflectOnChildRows: false,
+		highlightWeekends: true,
+		highlightColor: 'rgba(255, 210, 99, 0.40)',
+		highlightClass: 'weekend-class',
+        highlightedDurations: {unit: 'day', fractions: [0,6]},
+		zoomLevels: [],
+		columnUnit: 'day',
+		columnOffset: 1,
+		magnetUnit: 'day',
+		magnetOffset: 1,
+		rowHeight: 30,
+		rowPadding: 1,
+		fitWidth: true,
+		minWidth: 8000,
+		tableWidth: 250,
+		tableHeaders: [
+            {
+                title: "<span>asdfdsa</span>",
+                property: "label",
+                width: 140,
+                type: "tree"
+            }
+
+		],
+		headers: [{unit: "month", format: "MMM YYYY"},
+			{unit: "week", format: "w"},
+			{unit: "day", format: "dd"},
+			{unit: "day", format: "DD"}],
+		ganttTableModules: [SvelteGanttTable],
+		ganttBodyModules: [SvelteGanttDependencies],
+        minimumSpaceLeft: 250,
+        minimumSpaceRight: 250,
+        expandIconDown: '<i class="fas fa-angle-down"></i>',
         taskElementHook: (node, task) => {
             let popup;
             function onHover() {
@@ -137,35 +192,7 @@
                 }
             }
         },
-        rowElementHook: (node, row) => {
-            function onClick(event) {
-                console.log('[row] click', node, row, event);
-                // popup = createPopup(row, node);
-            }
-
-            node.addEventListener('click', onClick);
-
-            return {
-                destroy() {
-                    console.log('[row] destroy');
-                    node.removeEventListener('click', onClick);
-                }
-            }
-        },
-        rowHeadElementHook: (node, row) => {
-            function onClick(event) {
-                console.log('[rowHead] hover', node, row, event);
-            }
-
-            node.addEventListener('click', onClick);
-
-            return {
-                destroy() {
-                    console.log('[rowHead] destroy');
-                    node.removeEventListener('click', onClick);
-                }
-            }
-        },
+        // taskContent: (task) => `${task.label} ${task.from.format('HH:mm')}`
     }
 
     let gantt;
@@ -211,6 +238,15 @@
 </script>
 
 <style>
+    .sg-time-range.test-class {
+        background-image: linear-gradient(-45deg, rgba(0, 0, 0, 0) 46%, #000000 49%, #000000 51%, rgba(0, 0, 0, 0) 55%);
+    }
+    .test-class .sg-time-range-handle-left {
+        display: none;
+    }
+    .test-class .sg-time-range-handle-right {
+        display: none;
+    }
     #example-gantt-events {
         flex-grow: 1;
         overflow: auto;

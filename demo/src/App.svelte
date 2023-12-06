@@ -1,11 +1,12 @@
 <script>
-    import Nav from './components/Nav.svelte';  
+    import Nav from './components/Nav.svelte';
     import { Router, Route, navigate, Link } from "svelte-routing";
     import LargeDataset from './routes/LargeDataset.svelte';
     import Dependencies from './routes/Dependencies.svelte';
     import External from './routes/External.svelte';
     import Events from './routes/Events.svelte';
     import Tree from './routes/Tree.svelte';
+    import Month from './routes/Month.svelte';
     import { writable } from 'svelte/store';
     import { setContext } from 'svelte';
 
@@ -45,6 +46,7 @@
         <Route path="/tree" component="{Tree}" />
         <Route path="/external" component="{External}" />
         <Route path="/events" component="{Events}" />
+        <Route path="/month" component="{Month}" />
     </Router>
 
     {#if showOptions}

@@ -83,36 +83,36 @@
         transition: background 0.2s;
         outline: none;
     }
-    
+
     input[type=button]:hover {
         background-color: #b14d51;
     }
-    
+
     input[type=button]:active {
         background-color: #9d4548;
     }
-    
+
     .header {
         display: flex;
         padding: 16px;
         background: #ee6e73;
     }
-    
+
     @media only screen and (max-width: 900px) {
         .header {
             flex-direction: column;
         }
-    
+
         .header-title {
             justify-content: center;
             margin-bottom: 6px;
         }
-    
+
         .header-controls {
             justify-content: center;
         }
     }
-    
+
     .header-title {
         display: flex;
         flex: 1;
@@ -120,17 +120,17 @@
         font-size: 36px;
         padding: 0 16px;
     }
-    
+
     .header-title a {
         color: #ffffff;
         text-decoration: none;
     }
-    
+
     .header-controls {
         display: flex;
         align-items: center;
     }
-    
+
     .header input {
         margin-right: 4px;
     }
@@ -146,6 +146,7 @@
         <input type="button" value="Large" on:click={() => onLoadRoute('/svelte-gantt/')}/>
         <input type="button" value="External" on:click={() => onLoadRoute('/svelte-gantt/external')}/>
         <input type="button" value="Events" on:click={() => onLoadRoute('/svelte-gantt/events')}/>
+        <input type="button" value="Month" on:click={() => onLoadRoute('/svelte-gantt/month')}/>
 
         <input type="button" value="<" on:click={onSetPreviousDay}/>
         <input type="button" value="Day view" on:click={onSetDayView}/>
