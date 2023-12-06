@@ -12,16 +12,16 @@ import type { SvelteGanttDateAdapter } from './utils/date';
 import type { Writable } from 'svelte/store';
 import { SelectionManager } from './entities';
 
-interface Header { 
-    unit:string; 
-    format:string; 
+interface Header {
+    unit:string;
+    format:string;
     offset?: number;
     sticky?: boolean;
 }
 
 export interface GanttContextDimensions {
-    from: Writable<Date>, 
-    to: Writable<Date>, 
+    from: Writable<Date>,
+    to: Writable<Date>,
     width: Writable<number>,
     dateAdapter: SvelteGanttDateAdapter
     visibleWidth: Writable<number>,
@@ -58,6 +58,8 @@ export interface GanttContextOptions {
     reflectOnParentRows: boolean;
     reflectOnChildRows: boolean;
     onTaskButtonClick?: TaskButtonClickHandler;
+    expandIconDown?: string;
+    expandIconRight?: string;
 }
 
 interface Zoom {
@@ -118,10 +120,10 @@ export interface SvelteGanttOptions {
      *  highlighting will only work correctly if highlighted unit is the same or a constant fraction of the column unit eg. days, hours, minutes in the above.
      */
     highlightedDurations?: highlightedDurations;
-	/** 
+	/**
 	 * list of headers used for main gantt area
 	 *  - unit: time unit used, e.g. day will create a cell in the header for each day in the timeline
-	 *  - format: datetime format used for header cell label 
+	 *  - format: datetime format used for header cell label
 	 **/
     headers?: Header[];
     /**
@@ -135,11 +137,11 @@ export interface SvelteGanttOptions {
     ganttTableModules?: any[];
     ganttBodyModules?: any[];
     /**
-     * When task is assigned to a child row display them on parent rows as well, used when rows are disabled as a tree. 
+     * When task is assigned to a child row display them on parent rows as well, used when rows are disabled as a tree.
      */
     reflectOnParentRows?: boolean;
     /**
-     * When task is assigned to a parent row display them on child rows as well, used when rows are disabled as a tree. 
+     * When task is assigned to a parent row display them on child rows as well, used when rows are disabled as a tree.
      */
     reflectOnChildRows?: boolean;
 	/** sets top level gantt class which can be used for styling */
@@ -166,6 +168,12 @@ export interface SvelteGanttOptions {
      * Headers of table, used with SvelteGanttTable module
      */
     tableHeaders?: TableHeader[];
+
+    minimumSpaceLeft?: number;
+    minimumSpaceRight?: number;
+
+    expandIconDown?: string;
+    expandIconRight?: string;
 }
 
 export interface SvelteGanttComponent extends Component<SvelteGanttOptions> {

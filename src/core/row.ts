@@ -15,11 +15,12 @@ export interface RowModel {
     imageSrc?: string;
     expanded?:boolean;
     expanderRight?:boolean;
+    extraHeaderHtml?: string;
 }
 
 export interface SvelteRow {
     model: RowModel;
-    
+
     y: number;
     height: number;
     hidden?: boolean;
@@ -31,6 +32,7 @@ export interface SvelteRow {
     expanderRight?: boolean;
     childLevel?: number;
     entities?:any;
+    extraHeaderHtml?: string;
 }
 
 export class RowFactory {
@@ -47,7 +49,7 @@ export class RowFactory {
         row.classes = row.classes || '';
         // html content of row
         row.contentHtml = row.contentHtml || undefined;
-        // enable dragging of tasks to and from this row 
+        // enable dragging of tasks to and from this row
         row.enableDragging = row.enableDragging === undefined ? true : row.enableDragging;
         // height of row element
         const height = row.height || this.rowHeight;
@@ -57,7 +59,8 @@ export class RowFactory {
             y,
             height,
             expanded: true,
-            expanderRight: true
+            expanderRight: row.expanderRight === undefined ? false : row.expanderRight,
+            extraHeaderHtml: row.extraHeaderHtml
         }
     }
 
@@ -84,7 +87,7 @@ export class RowFactory {
             row.childLevel = level;
             row.parent = parent;
             row.allParents = parents;
-            
+
             ctx.y += row.height;
 
             if(rowModel.children) {

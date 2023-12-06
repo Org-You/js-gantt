@@ -1,17 +1,20 @@
 <script lang="ts">
-    import type { SvelteRow } from '../../core/row';
+    import type {SvelteRow} from '../../core/row';
 
-    import { createEventDispatcher } from "svelte";
+    import {createEventDispatcher, getContext} from "svelte";
+    import {GanttContextOptions, SvelteGanttOptions} from "../../gantt";
+
+    const {expandIconDown, expandIconRight} : GanttContextOptions = getContext('options');
 
     export let row: SvelteRow;
-    
+
     const dispatch = createEventDispatcher();
 
     function onExpandToggle() {
-        if(row.expanded) {
-            dispatch('rowCollapsed', { row });
+        if (row.expanded) {
+            dispatch('rowCollapsed', {row});
         } else {
-            dispatch('rowExpanded', { row });
+            dispatch('rowExpanded', {row});
         }
     }
 </script>
@@ -21,23 +24,29 @@
         {#if row.children}
             <div class="sg-tree-expander" on:click="{onExpandToggle}">
                 {#if row.expanded}
-                    <i class="bi bi-caret-down-fill"></i>
+                    {@html expandIconDown}
                 {:else}
-                    <i class="bi bi-caret-right-fill"></i>
+                    {@html expandIconRight}
                 {/if}
             </div>
         {/if}
         <slot></slot>
+        {#if row.extraHeaderHtml}
+            {@html row.extraHeaderHtml}
+        {/if}
     {:else}
         <slot></slot>
         {#if row.children}
             <div class="sg-tree-expander" on:click="{onExpandToggle}">
                 {#if row.expanded}
-                    <i class="bi bi-caret-down-fill"></i>
+                    {@html expandIconDown}
                 {:else}
-                    <i class="bi bi-caret-right-fill"></i>
+                    {@html expandIconRight}
                 {/if}
             </div>
+        {/if}
+        {#if row.extraHeaderHtml}
+            {@html row.extraHeaderHtml}
         {/if}
     {/if}
 

@@ -95,6 +95,8 @@
 	];
     export let taskContent = null;
     export let tableWidth = 240;
+    export let minimumSpaceLeft = null;
+    export let minimumSpaceRight = null;
     export let resizeHandleWidth = 10;
     export let onTaskButtonClick = null;
 
@@ -132,6 +134,9 @@
     export let taskElementHook = null;
     export let rowElementHook = null;
     export let rowHeadElementHook = null;
+
+    export let expandIconDown = '<i class="fas fa-angle-down"></i>';
+    export let expandIconRight = '<i class="fas fa-angle-right"></i>';
 
     const visibleWidth = writable<number>(null);
     const visibleHeight = writable<number>(null);
@@ -241,7 +246,9 @@
         resizeHandleWidth: resizeHandleWidth,
         reflectOnParentRows,
         reflectOnChildRows,
-        onTaskButtonClick
+        onTaskButtonClick,
+        expandIconDown,
+        expandIconRight,
     });
 
     const hoveredRow = writable<number>(null);
@@ -280,7 +287,7 @@
     });
 
     onDelegatedEvent('mousedown', 'data-task-id', (event, data, target) => {
-        const taskId = +data;
+        const taskId = data;
         if(isLeftClick(event) && !target.classList.contains("sg-task-reflected")){
             if (event.ctrlKey) {
                 selectionManager.toggleSelection(taskId, target);
@@ -293,16 +300,16 @@
     });
 
     onDelegatedEvent('mouseover', 'data-row-id', (event, data, target) => {
-        $hoveredRow = +data;
+        $hoveredRow = data;
     });
 
     onDelegatedEvent('click', 'data-row-id', (event, data, target) => {
         selectionManager.unSelectTasks();
-        if($selectedRow == +data){
+        if($selectedRow == data){
             $selectedRow = null;
             return
         }
-        $selectedRow = +data;
+        $selectedRow = data;
     });
 
     onDelegatedEvent('mouseleave', 'empty', (event, data, target) => {
@@ -348,7 +355,16 @@
     }
 
     function onResize(event) {
-        tableWidth = event.detail.left;
+        if (minimumSpaceLeft && minimumSpaceLeft >= event.detail.left) {
+            tableWidth = minimumSpaceLeft;
+        } else if (minimumSpaceRight && $visibleWidth < minimumSpaceRight) {
+            if (!mainContainer) {
+                tableWidth = event.detail.left;
+            }
+            return mainContainer.clientWidth - minimumSpaceRight;
+        } else {
+            tableWidth = event.detail.left;
+        }
     }
 
     let zoomLevel = 0;
@@ -706,18 +722,26 @@
         visibleTasks = tasks;
     }
 
+    function minimumWidth() {
+        if (minimumSpaceRight) {
+            return minimumSpaceRight;
+        } else {
+            return 0;
+        }
+    }
+
 </script>
 
 <!-- svelte-ignore a11y-click-events-have-key-events -->
 <!-- svelte-ignore a11y-mouse-events-have-key-events -->
 <div class="sg-gantt {classes}" class:sg-disable-transition={!disableTransition} bind:this={ganttElement} on:mousedown|stopPropagation={onEvent} on:click|stopPropagation={onEvent} on:mouseover={onEvent} on:mouseleave={onEvent}>
     {#each ganttTableModules as module}
-    <svelte:component this={module} {rowContainerHeight} {paddingTop} {paddingBottom} {tableWidth} {...$$restProps} on:init="{onModuleInit}" {visibleRows} />
+    <svelte:component this={module} {rowContainerHeight} {paddingTop} {paddingBottom} {tableWidth} {minimumSpaceLeft} {minimumSpaceRight} {...$$restProps} on:init="{onModuleInit}" {visibleRows} />
 
-    <Resizer x={tableWidth} on:resize="{onResize}" container={ganttElement}></Resizer>
+    <Resizer x={tableWidth} min={minimumSpaceLeft} max={minimumSpaceRight} on:resize="{onResize}" container={ganttElement}></Resizer>
     {/each}
 
-    <div class="sg-timeline sg-view">
+    <div class="sg-timeline sg-view" style="min-width:{minimumWidth()}px ">
         <div class="sg-header" bind:this={mainHeaderContainer} bind:clientHeight="{$headerHeight}">
             <div class="sg-header-scroller" use:horizontalScrollListener>
                 <div class="header-container" style="width:{$_width}px">
