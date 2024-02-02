@@ -9048,7 +9048,7 @@ var app = (function () {
     	};
     }
 
-    // (426:8) {:else}
+    // (444:8) {:else}
     function create_else_block$3(ctx) {
     	let t_value = /*model*/ ctx[0].label + "";
     	let t;
@@ -9069,7 +9069,7 @@ var app = (function () {
     	};
     }
 
-    // (424:30) 
+    // (442:30) 
     function create_if_block_3$2(ctx) {
     	let html_tag;
     	let raw_value = /*taskContent*/ ctx[8](/*model*/ ctx[0]) + "";
@@ -9095,7 +9095,7 @@ var app = (function () {
     	};
     }
 
-    // (422:8) {#if model.html}
+    // (440:8) {#if model.html}
     function create_if_block_2$2(ctx) {
     	let html_tag;
     	let raw_value = /*model*/ ctx[0].html + "";
@@ -9121,7 +9121,7 @@ var app = (function () {
     	};
     }
 
-    // (428:8) {#if model.showButton}
+    // (446:8) {#if model.showButton}
     function create_if_block_1$2(ctx) {
     	let span;
     	let raw_value = /*model*/ ctx[0].buttonHtml + "";
@@ -9157,7 +9157,7 @@ var app = (function () {
     	};
     }
 
-    // (436:6) {#if model.labelBottom}
+    // (454:6) {#if model.labelBottom}
     function create_if_block$5(ctx) {
     	let label;
     	let t_value = /*model*/ ctx[0].labelBottom + "";
@@ -9368,6 +9368,10 @@ var app = (function () {
     					taskSetting = tasksSettings.get(selId.toString());
     				}
 
+    				if (taskSetting === undefined) {
+    					taskSetting = tasksSettings.get(parseInt(selId));
+    				}
+
     				const draggable = new Draggable(selectedItem.HTMLElement, taskSetting, selectedItem.offsetData);
     				draggable.onmousedown(event);
     				currentSelection.set(selId, Object.assign(Object.assign({}, selectedItem), { draggable }));
@@ -9424,13 +9428,27 @@ var app = (function () {
     	}
 
     	dispatchSelectionEvent(taskId, event) {
+    		// console.log(taskId, event);
     		let taskSetting = tasksSettings.get(taskId);
 
+    		// console.log(tasksSettings, taskSetting);
     		if (taskSetting === undefined) {
     			taskSetting = tasksSettings.get(taskId.toString());
     		}
 
+    		if (taskSetting === undefined) {
+    			taskSetting = tasksSettings.get(parseInt(taskId));
+    		}
+
+    		// tasksSettings.forEach(element => {
+    		//     console.log(element.modelId, taskId);
+    		//     if (element.modelId == taskId) {
+    		//         taskSetting = element;
+    		//     }
+    		// });
+    		// console.log(tasksSettings, taskSetting);
     		const x = taskSetting.getX();
+
     		const y = taskSetting.getY();
     		const width = taskSetting.getWidth();
 
@@ -9442,6 +9460,10 @@ var app = (function () {
 
     				if (taskSetting === undefined) {
     					taskSetting = tasksSettings.get(selId.toString());
+    				}
+
+    				if (taskSetting === undefined) {
+    					taskSetting = tasksSettings.get(parseInt(selId));
     				}
 
     				selectedItem.offsetData = {
@@ -11306,6 +11328,8 @@ var app = (function () {
             row.contentHtml = row.contentHtml || undefined;
             // enable dragging of tasks to and from this row
             row.enableDragging = row.enableDragging === undefined ? true : row.enableDragging;
+            row.enableMoveRow = row.enableMoveRow === undefined ? false : row.enableMoveRow;
+            row.moveRowIconClass = row.moveRowIconClass === undefined ? 'fa fa-ellipsis-v' : row.moveRowIconClass;
             // height of row element
             const height = row.height || this.rowHeight;
             return {
@@ -11314,7 +11338,8 @@ var app = (function () {
                 height,
                 expanded: true,
                 expanderRight: row.expanderRight === undefined ? false : row.expanderRight,
-                extraHeaderHtml: row.extraHeaderHtml
+                extraHeaderHtml: row.extraHeaderHtml,
+                moveRowIconClass: row.moveRowIconClass
             };
         }
         createRows(rows) {
@@ -11457,41 +11482,41 @@ var app = (function () {
 
     function get_each_context$3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[134] = list[i];
+    	child_ctx[135] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_1$1(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[137] = list[i];
+    	child_ctx[138] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[140] = list[i];
+    	child_ctx[141] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_3(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[143] = list[i];
+    	child_ctx[144] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_4(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[140] = list[i];
+    	child_ctx[141] = list[i];
     	return child_ctx;
     }
 
     function get_each_context_5(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[134] = list[i];
+    	child_ctx[135] = list[i];
     	return child_ctx;
     }
 
-    // (655:4) {#each ganttTableModules as module}
+    // (696:4) {#each ganttTableModules as module}
     function create_each_block_5(ctx) {
     	let switch_instance;
     	let t;
@@ -11515,7 +11540,7 @@ var app = (function () {
     		{ visibleRows: /*visibleRows*/ ctx[10] }
     	];
 
-    	var switch_value = /*module*/ ctx[134];
+    	var switch_value = /*module*/ ctx[135];
 
     	function switch_props(ctx) {
     		let switch_instance_props = {};
@@ -11575,7 +11600,7 @@ var app = (function () {
     				])
     			: {};
 
-    			if (dirty[0] & /*ganttTableModules*/ 64 && switch_value !== (switch_value = /*module*/ ctx[134])) {
+    			if (dirty[0] & /*ganttTableModules*/ 64 && switch_value !== (switch_value = /*module*/ ctx[135])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -11626,12 +11651,12 @@ var app = (function () {
     	};
     }
 
-    // (666:20) {#each $allTimeRanges as timeRange (timeRange.model.id)}
+    // (707:20) {#each $allTimeRanges as timeRange (timeRange.model.id)}
     function create_each_block_4(key_1, ctx) {
     	let first;
     	let timerangeheader;
     	let current;
-    	const timerangeheader_spread_levels = [/*timeRange*/ ctx[140]];
+    	const timerangeheader_spread_levels = [/*timeRange*/ ctx[141]];
     	let timerangeheader_props = {};
 
     	for (let i = 0; i < timerangeheader_spread_levels.length; i += 1) {
@@ -11657,7 +11682,7 @@ var app = (function () {
     			ctx = new_ctx;
 
     			const timerangeheader_changes = (dirty[0] & /*$allTimeRanges*/ 67108864)
-    			? get_spread_update(timerangeheader_spread_levels, [get_spread_object(/*timeRange*/ ctx[140])])
+    			? get_spread_update(timerangeheader_spread_levels, [get_spread_object(/*timeRange*/ ctx[141])])
     			: {};
 
     			timerangeheader.$set(timerangeheader_changes);
@@ -11678,12 +11703,12 @@ var app = (function () {
     	};
     }
 
-    // (680:24) {#each visibleRows as row (row.model.id)}
+    // (721:24) {#each visibleRows as row (row.model.id)}
     function create_each_block_3(key_1, ctx) {
     	let first;
     	let row;
     	let current;
-    	row = new Row({ props: { row: /*row*/ ctx[143] } });
+    	row = new Row({ props: { row: /*row*/ ctx[144] } });
 
     	return {
     		key: key_1,
@@ -11701,7 +11726,7 @@ var app = (function () {
     		p(new_ctx, dirty) {
     			ctx = new_ctx;
     			const row_changes = {};
-    			if (dirty[0] & /*visibleRows*/ 1024) row_changes.row = /*row*/ ctx[143];
+    			if (dirty[0] & /*visibleRows*/ 1024) row_changes.row = /*row*/ ctx[144];
     			row.$set(row_changes);
     		},
     		i(local) {
@@ -11720,12 +11745,12 @@ var app = (function () {
     	};
     }
 
-    // (687:20) {#each $allTimeRanges as timeRange (timeRange.model.id)}
+    // (728:20) {#each $allTimeRanges as timeRange (timeRange.model.id)}
     function create_each_block_2(key_1, ctx) {
     	let first;
     	let timerange;
     	let current;
-    	const timerange_spread_levels = [/*timeRange*/ ctx[140]];
+    	const timerange_spread_levels = [/*timeRange*/ ctx[141]];
     	let timerange_props = {};
 
     	for (let i = 0; i < timerange_spread_levels.length; i += 1) {
@@ -11751,7 +11776,7 @@ var app = (function () {
     			ctx = new_ctx;
 
     			const timerange_changes = (dirty[0] & /*$allTimeRanges*/ 67108864)
-    			? get_spread_update(timerange_spread_levels, [get_spread_object(/*timeRange*/ ctx[140])])
+    			? get_spread_update(timerange_spread_levels, [get_spread_object(/*timeRange*/ ctx[141])])
     			: {};
 
     			timerange.$set(timerange_changes);
@@ -11772,19 +11797,19 @@ var app = (function () {
     	};
     }
 
-    // (691:20) {#each visibleTasks as task (task.model.id)}
+    // (732:20) {#each visibleTasks as task (task.model.id)}
     function create_each_block_1$1(key_1, ctx) {
     	let first;
     	let task;
     	let current;
 
     	const task_spread_levels = [
-    		{ model: /*task*/ ctx[137].model },
-    		{ left: /*task*/ ctx[137].left },
-    		{ width: /*task*/ ctx[137].width },
-    		{ height: /*task*/ ctx[137].height },
-    		{ top: /*task*/ ctx[137].top },
-    		/*task*/ ctx[137]
+    		{ model: /*task*/ ctx[138].model },
+    		{ left: /*task*/ ctx[138].left },
+    		{ width: /*task*/ ctx[138].width },
+    		{ height: /*task*/ ctx[138].height },
+    		{ top: /*task*/ ctx[138].top },
+    		/*task*/ ctx[138]
     	];
 
     	let task_props = {};
@@ -11813,12 +11838,12 @@ var app = (function () {
 
     			const task_changes = (dirty[0] & /*visibleTasks*/ 8388608)
     			? get_spread_update(task_spread_levels, [
-    					{ model: /*task*/ ctx[137].model },
-    					{ left: /*task*/ ctx[137].left },
-    					{ width: /*task*/ ctx[137].width },
-    					{ height: /*task*/ ctx[137].height },
-    					{ top: /*task*/ ctx[137].top },
-    					get_spread_object(/*task*/ ctx[137])
+    					{ model: /*task*/ ctx[138].model },
+    					{ left: /*task*/ ctx[138].left },
+    					{ width: /*task*/ ctx[138].width },
+    					{ height: /*task*/ ctx[138].height },
+    					{ top: /*task*/ ctx[138].top },
+    					get_spread_object(/*task*/ ctx[138])
     				])
     			: {};
 
@@ -11840,7 +11865,7 @@ var app = (function () {
     	};
     }
 
-    // (696:16) {#each ganttBodyModules as module}
+    // (737:16) {#each ganttBodyModules as module}
     function create_each_block$3(ctx) {
     	let switch_instance;
     	let switch_instance_anchor;
@@ -11853,7 +11878,7 @@ var app = (function () {
     		/*$$restProps*/ ctx[45]
     	];
 
-    	var switch_value = /*module*/ ctx[134];
+    	var switch_value = /*module*/ ctx[135];
 
     	function switch_props(ctx) {
     		let switch_instance_props = {};
@@ -11890,7 +11915,7 @@ var app = (function () {
     				])
     			: {};
 
-    			if (dirty[0] & /*ganttBodyModules*/ 128 && switch_value !== (switch_value = /*module*/ ctx[134])) {
+    			if (dirty[0] & /*ganttBodyModules*/ 128 && switch_value !== (switch_value = /*module*/ ctx[135])) {
     				if (switch_instance) {
     					group_outros();
     					const old_component = switch_instance;
@@ -11986,7 +12011,7 @@ var app = (function () {
 
     	columnheader.$on("dateSelected", /*onDateSelected*/ ctx[43]);
     	let each_value_4 = /*$allTimeRanges*/ ctx[26];
-    	const get_key = ctx => /*timeRange*/ ctx[140].model.id;
+    	const get_key = ctx => /*timeRange*/ ctx[141].model.id;
 
     	for (let i = 0; i < each_value_4.length; i += 1) {
     		let child_ctx = get_each_context_4(ctx, each_value_4, i);
@@ -12003,7 +12028,7 @@ var app = (function () {
     		});
 
     	let each_value_3 = /*visibleRows*/ ctx[10];
-    	const get_key_1 = ctx => /*row*/ ctx[143].model.id;
+    	const get_key_1 = ctx => /*row*/ ctx[144].model.id;
 
     	for (let i = 0; i < each_value_3.length; i += 1) {
     		let child_ctx = get_each_context_3(ctx, each_value_3, i);
@@ -12012,7 +12037,7 @@ var app = (function () {
     	}
 
     	let each_value_2 = /*$allTimeRanges*/ ctx[26];
-    	const get_key_2 = ctx => /*timeRange*/ ctx[140].model.id;
+    	const get_key_2 = ctx => /*timeRange*/ ctx[141].model.id;
 
     	for (let i = 0; i < each_value_2.length; i += 1) {
     		let child_ctx = get_each_context_2(ctx, each_value_2, i);
@@ -12021,7 +12046,7 @@ var app = (function () {
     	}
 
     	let each_value_1 = /*visibleTasks*/ ctx[23];
-    	const get_key_3 = ctx => /*task*/ ctx[137].model.id;
+    	const get_key_3 = ctx => /*task*/ ctx[138].model.id;
 
     	for (let i = 0; i < each_value_1.length; i += 1) {
     		let child_ctx = get_each_context_1$1(ctx, each_value_1, i);
@@ -12095,7 +12120,7 @@ var app = (function () {
     			set_style(div0, "width", /*$_width*/ ctx[12] + "px");
     			attr(div1, "class", "sg-header-scroller svelte-1vc96b4");
     			attr(div2, "class", "sg-header");
-    			add_render_callback(() => /*div2_elementresize_handler*/ ctx[111].call(div2));
+    			add_render_callback(() => /*div2_elementresize_handler*/ ctx[112].call(div2));
     			set_style(div3, "transform", "translateY(" + /*paddingTop*/ ctx[21] + "px)");
     			attr(div4, "class", "sg-rows svelte-1vc96b4");
     			set_style(div4, "height", /*rowContainerHeight*/ ctx[20] + "px");
@@ -12103,7 +12128,7 @@ var app = (function () {
     			attr(div6, "class", "content svelte-1vc96b4");
     			set_style(div6, "width", /*$_width*/ ctx[12] + "px");
     			attr(div7, "class", "sg-timeline-body svelte-1vc96b4");
-    			add_render_callback(() => /*div7_elementresize_handler*/ ctx[114].call(div7));
+    			add_render_callback(() => /*div7_elementresize_handler*/ ctx[115].call(div7));
     			toggle_class(div7, "zooming", /*zooming*/ ctx[19]);
     			attr(div8, "class", "sg-timeline sg-view svelte-1vc96b4");
     			set_style(div8, "min-width", /*minimumWidth*/ ctx[44]() + "px");
@@ -12133,8 +12158,8 @@ var app = (function () {
     				}
     			}
 
-    			/*div2_binding*/ ctx[110](div2);
-    			div2_resize_listener = add_iframe_resize_listener(div2, /*div2_elementresize_handler*/ ctx[111].bind(div2));
+    			/*div2_binding*/ ctx[111](div2);
+    			div2_resize_listener = add_iframe_resize_listener(div2, /*div2_elementresize_handler*/ ctx[112].bind(div2));
     			append(div8, t2);
     			append(div8, div7);
     			append(div7, div6);
@@ -12149,7 +12174,7 @@ var app = (function () {
     				}
     			}
 
-    			/*div4_binding*/ ctx[112](div4);
+    			/*div4_binding*/ ctx[113](div4);
     			append(div6, t4);
     			append(div6, div5);
 
@@ -12175,9 +12200,9 @@ var app = (function () {
     				}
     			}
 
-    			/*div7_binding*/ ctx[113](div7);
-    			div7_resize_listener = add_iframe_resize_listener(div7, /*div7_elementresize_handler*/ ctx[114].bind(div7));
-    			/*div9_binding*/ ctx[115](div9);
+    			/*div7_binding*/ ctx[114](div7);
+    			div7_resize_listener = add_iframe_resize_listener(div7, /*div7_elementresize_handler*/ ctx[115].bind(div7));
+    			/*div9_binding*/ ctx[116](div9);
     			current = true;
 
     			if (!mounted) {
@@ -12394,7 +12419,7 @@ var app = (function () {
     				each_blocks_4[i].d();
     			}
 
-    			/*div2_binding*/ ctx[110](null);
+    			/*div2_binding*/ ctx[111](null);
     			div2_resize_listener();
     			destroy_component(columns_1);
 
@@ -12402,7 +12427,7 @@ var app = (function () {
     				each_blocks_3[i].d();
     			}
 
-    			/*div4_binding*/ ctx[112](null);
+    			/*div4_binding*/ ctx[113](null);
 
     			for (let i = 0; i < each_blocks_2.length; i += 1) {
     				each_blocks_2[i].d();
@@ -12413,9 +12438,9 @@ var app = (function () {
     			}
 
     			destroy_each(each_blocks, detaching);
-    			/*div7_binding*/ ctx[113](null);
+    			/*div7_binding*/ ctx[114](null);
     			div7_resize_listener();
-    			/*div9_binding*/ ctx[115](null);
+    			/*div9_binding*/ ctx[116](null);
     			mounted = false;
     			run_all(dispose);
     		}
@@ -12440,7 +12465,7 @@ var app = (function () {
 
     function instance$6$1($$self, $$props, $$invalidate) {
     	const omit_props_names = [
-    		"rows","tasks","timeRanges","rowPadding","rowHeight","from","to","minWidth","fitWidth","classes","headers","zoomLevels","taskContent","tableWidth","minimumSpaceLeft","minimumSpaceRight","resizeHandleWidth","onTaskButtonClick","dateAdapter","magnetUnit","magnetOffset","columnUnit","columnOffset","ganttTableModules","ganttBodyModules","reflectOnParentRows","reflectOnChildRows","columnStrokeColor","columnStrokeWidth","highlightedDurations","highlightColor","highlightClass","taskElementHook","rowElementHook","rowHeadElementHook","expandIconDown","expandIconRight","columnService","api","taskFactory","rowFactory","dndManager","timeRangeFactory","utils","refreshTimeRanges","refreshTasks","getRowContainer","selectTask","unselectTasks","scrollToRow","scrollToTask","updateTask","updateTasks","updateRow","updateRows","getRow","insertRow","insertChildRow","deleteRow","getTask","getTasks"
+    		"rows","tasks","timeRanges","rowPadding","rowHeight","from","to","minWidth","fitWidth","classes","headers","zoomLevels","taskContent","tableWidth","minimumSpaceLeft","minimumSpaceRight","resizeHandleWidth","onTaskButtonClick","dateAdapter","magnetUnit","magnetOffset","columnUnit","columnOffset","ganttTableModules","ganttBodyModules","reflectOnParentRows","reflectOnChildRows","columnStrokeColor","columnStrokeWidth","highlightedDurations","highlightColor","highlightClass","taskElementHook","rowElementHook","rowHeadElementHook","expandIconDown","expandIconRight","columnService","api","taskFactory","rowFactory","dndManager","timeRangeFactory","utils","refreshTimeRanges","refreshTasks","getRowContainer","selectTask","unselectTasks","scrollToRow","scrollToTask","updateTask","updateTasks","updateRow","updateRows","getRow","insertRow","insertChildRow","appendChildRow","deleteRow","getTask","getTasks"
     	];
 
     	let $$restProps = compute_rest_props($$props, omit_props_names);
@@ -12462,11 +12487,11 @@ var app = (function () {
     	let $_rowHeight;
     	let $headerHeight;
     	let $allTimeRanges;
-    	component_subscribe($$self, taskStore, $$value => $$invalidate(103, $taskStore = $$value));
-    	component_subscribe($$self, rowTaskCache, $$value => $$invalidate(104, $rowTaskCache = $$value));
-    	component_subscribe($$self, allRows, $$value => $$invalidate(105, $allRows = $$value));
-    	component_subscribe($$self, allTasks, $$value => $$invalidate(118, $allTasks = $$value));
-    	component_subscribe($$self, rowStore, $$value => $$invalidate(106, $rowStore = $$value));
+    	component_subscribe($$self, taskStore, $$value => $$invalidate(104, $taskStore = $$value));
+    	component_subscribe($$self, rowTaskCache, $$value => $$invalidate(105, $rowTaskCache = $$value));
+    	component_subscribe($$self, allRows, $$value => $$invalidate(106, $allRows = $$value));
+    	component_subscribe($$self, allTasks, $$value => $$invalidate(119, $allTasks = $$value));
+    	component_subscribe($$self, rowStore, $$value => $$invalidate(107, $rowStore = $$value));
     	component_subscribe($$self, allTimeRanges, $$value => $$invalidate(26, $allTimeRanges = $$value));
 
     	var __awaiter = this && this.__awaiter || function (thisArg, _arguments, P, generator) {
@@ -12518,22 +12543,22 @@ var app = (function () {
     	let { rowPadding = 6 } = $$props;
     	let { rowHeight = 52 } = $$props;
     	const _rowHeight = writable(rowHeight);
-    	component_subscribe($$self, _rowHeight, value => $$invalidate(123, $_rowHeight = value));
+    	component_subscribe($$self, _rowHeight, value => $$invalidate(124, $_rowHeight = value));
     	const _rowPadding = writable(rowPadding);
-    	component_subscribe($$self, _rowPadding, value => $$invalidate(109, $_rowPadding = value));
+    	component_subscribe($$self, _rowPadding, value => $$invalidate(110, $_rowPadding = value));
     	let { from } = $$props;
     	let { to } = $$props;
     	assertSet({ from, to });
     	const _from = writable(toDateNum(from));
-    	component_subscribe($$self, _from, value => $$invalidate(108, $_from = value));
+    	component_subscribe($$self, _from, value => $$invalidate(109, $_from = value));
     	const _to = writable(toDateNum(to));
-    	component_subscribe($$self, _to, value => $$invalidate(107, $_to = value));
+    	component_subscribe($$self, _to, value => $$invalidate(108, $_to = value));
     	let { minWidth = 800 } = $$props;
     	let { fitWidth = false } = $$props;
     	const _minWidth = writable(minWidth);
-    	component_subscribe($$self, _minWidth, value => $$invalidate(120, $_minWidth = value));
+    	component_subscribe($$self, _minWidth, value => $$invalidate(121, $_minWidth = value));
     	const _fitWidth = writable(fitWidth);
-    	component_subscribe($$self, _fitWidth, value => $$invalidate(119, $_fitWidth = value));
+    	component_subscribe($$self, _fitWidth, value => $$invalidate(120, $_fitWidth = value));
     	let { classes = [] } = $$props;
     	let { headers = [{ unit: 'day', format: 'MMMM Do' }, { unit: 'hour', format: 'H:mm' }] } = $$props;
 
@@ -12567,7 +12592,7 @@ var app = (function () {
 
     	function setMagnetDuration(unit, offset) {
     		if (unit && offset) {
-    			$$invalidate(98, magnetDuration = getDuration(unit, offset));
+    			$$invalidate(99, magnetDuration = getDuration(unit, offset));
     		}
     	}
 
@@ -12707,9 +12732,9 @@ var app = (function () {
     	});
 
     	const hoveredRow = writable(null);
-    	component_subscribe($$self, hoveredRow, value => $$invalidate(121, $hoveredRow = value));
+    	component_subscribe($$self, hoveredRow, value => $$invalidate(122, $hoveredRow = value));
     	const selectedRow = writable(null);
-    	component_subscribe($$self, selectedRow, value => $$invalidate(122, $selectedRow = value));
+    	component_subscribe($$self, selectedRow, value => $$invalidate(123, $selectedRow = value));
     	const ganttContext = { scrollables, hoveredRow, selectedRow };
     	setContext('gantt', ganttContext);
 
@@ -12734,7 +12759,7 @@ var app = (function () {
     		api.registerEvent('tasks', 'dblclicked');
     		api.registerEvent('timeranges', 'clicked');
     		api.registerEvent('timeranges', 'resized');
-    		$$invalidate(97, mounted = true);
+    		$$invalidate(98, mounted = true);
     	});
 
     	onDelegatedEvent('mousedown', 'data-task-id', (event, data, target) => {
@@ -12793,7 +12818,7 @@ var app = (function () {
     				}
     			});
 
-    			$$invalidate(99, __scrollTop = scrollTop);
+    			$$invalidate(100, __scrollTop = scrollTop);
     		};
 
     		node.addEventListener('scroll', onscroll);
@@ -13115,6 +13140,49 @@ var app = (function () {
     		taskFactory.updateTasks($allTasks);
     	}
 
+    	function appendChildRow(model, parentId) {
+    		// Get Parent Row
+    		let parentRow = getRow(parentId);
+
+    		let afterId = parentRow.model.id;
+    		const row = rowFactory.createRow(model, parentRow.y + parentRow.height);
+
+    		// Add new Row to Parent
+    		if (!parentRow.model.children) {
+    			parentRow.model.children = [];
+    		} else {
+    			if (parentRow.allChildren.length > 0) {
+    				let last = parentRow.allChildren[parentRow.allChildren.length - 1];
+    				afterId = last.model.id;
+    			}
+    		}
+
+    		row.childLevel = parentRow.childLevel + 1;
+    		row.parent = parentRow;
+
+    		row.allParents = row.allParents
+    		? [...row.allParents, parentRow]
+    		: [parentRow];
+
+    		// Add Parent to Row
+    		parentRow.model.children = [...parentRow.model.children, model];
+
+    		parentRow.children = parentRow.children
+    		? [...parentRow.children, row]
+    		: [row];
+
+    		parentRow.allChildren = parentRow.allChildren
+    		? [...parentRow.allChildren, row]
+    		: [row];
+
+    		rowStore.insertAt(row, afterId);
+    		rowStore.refresh();
+    		$$invalidate(47, taskFactory.rowEntities = $rowStore.entities, taskFactory);
+
+    		// Update Tasks
+    		taskFactory.updateTasks($allTasks);
+    	}
+
     	function deleteRow(rowId) {
     		let row = getRow(rowId);
 
@@ -13137,6 +13205,21 @@ var app = (function () {
 
     						if (childRow.model.id === row.model.id) {
     							parentRow.children.splice(j, 1);
+    							break;
+    						}
+    					}
+    				}
+
+    				const indexAllChild = parentRow.allChildren.indexOf(row);
+
+    				if (indexAllChild > -1) {
+    					parentRow.allChildren.splice(indexAllChild, 1);
+    				} else {
+    					for (let j = 0; j < parentRow.allChildren.length; j++) {
+    						let childRow = parentRow.allChildren[j];
+
+    						if (childRow.model.id === row.model.id) {
+    							parentRow.allChildren.splice(j, 1);
     							break;
     						}
     					}
@@ -13264,15 +13347,15 @@ var app = (function () {
     	};
 
     	$$self.$$.update = () => {
-    		if ($$self.$$.dirty[1] & /*rows*/ 524288 | $$self.$$.dirty[3] & /*mounted*/ 16) {
+    		if ($$self.$$.dirty[1] & /*rows*/ 524288 | $$self.$$.dirty[3] & /*mounted*/ 32) {
     			if (mounted) initRows(rows);
     		}
 
-    		if ($$self.$$.dirty[1] & /*tasks*/ 1048576 | $$self.$$.dirty[3] & /*mounted*/ 16) {
+    		if ($$self.$$.dirty[1] & /*tasks*/ 1048576 | $$self.$$.dirty[3] & /*mounted*/ 32) {
     			if (mounted) initTasks(tasks);
     		}
 
-    		if ($$self.$$.dirty[1] & /*timeRanges*/ 2097152 | $$self.$$.dirty[3] & /*mounted*/ 16) {
+    		if ($$self.$$.dirty[1] & /*timeRanges*/ 2097152 | $$self.$$.dirty[3] & /*mounted*/ 32) {
     			if (mounted) initTimeRanges(timeRanges);
     		}
 
@@ -13303,7 +13386,7 @@ var app = (function () {
     			setMagnetDuration(magnetUnit, magnetOffset);
     		}
 
-    		if ($$self.$$.dirty[0] & /*columnUnit, $_width*/ 4097 | $$self.$$.dirty[1] & /*columnOffset*/ 32768 | $$self.$$.dirty[3] & /*$_from, $_to*/ 49152) {
+    		if ($$self.$$.dirty[0] & /*columnUnit, $_width*/ 4097 | $$self.$$.dirty[1] & /*columnOffset*/ 32768 | $$self.$$.dirty[3] & /*$_from, $_to*/ 98304) {
     			{
     				$$invalidate(18, columns = getColumnsV2($_from, $_to, columnUnit, columnOffset));
     				tickWithoutCSSTransition();
@@ -13312,7 +13395,7 @@ var app = (function () {
     			}
     		}
 
-    		if ($$self.$$.dirty[3] & /*$_rowPadding, $rowStore*/ 73728) {
+    		if ($$self.$$.dirty[3] & /*$_rowPadding, $rowStore*/ 147456) {
     			{
     				$$invalidate(47, taskFactory.rowPadding = $_rowPadding, taskFactory);
     				$$invalidate(47, taskFactory.rowEntities = $rowStore.entities, taskFactory);
@@ -13323,7 +13406,7 @@ var app = (function () {
     			$$invalidate(48, rowFactory.rowHeight = rowHeight, rowFactory);
     		}
 
-    		if ($$self.$$.dirty[0] & /*$_width*/ 4096 | $$self.$$.dirty[2] & /*magnetOffset, magnetUnit*/ 12 | $$self.$$.dirty[3] & /*$_from, $_to, magnetDuration*/ 49184) {
+    		if ($$self.$$.dirty[0] & /*$_width*/ 4096 | $$self.$$.dirty[2] & /*magnetOffset, magnetUnit*/ 12 | $$self.$$.dirty[3] & /*$_from, $_to, magnetDuration*/ 98368) {
     			{
     				$$invalidate(49, utils.from = $_from, utils);
     				$$invalidate(49, utils.to = $_to, utils);
@@ -13335,35 +13418,35 @@ var app = (function () {
     			//utils.width = columns.length * columns[columns.length - 1].width;
     		}
 
-    		if ($$self.$$.dirty[3] & /*$allRows*/ 4096) {
-    			$$invalidate(100, filteredRows = $allRows.filter(row => !row.hidden));
+    		if ($$self.$$.dirty[3] & /*$allRows*/ 8192) {
+    			$$invalidate(101, filteredRows = $allRows.filter(row => !row.hidden));
     		}
 
-    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*filteredRows*/ 128) {
+    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*filteredRows*/ 256) {
     			$$invalidate(20, rowContainerHeight = filteredRows.length * rowHeight);
     		}
 
-    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*__scrollTop*/ 64) {
-    			$$invalidate(101, startIndex = Math.floor(__scrollTop / rowHeight));
+    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*__scrollTop*/ 128) {
+    			$$invalidate(102, startIndex = Math.floor(__scrollTop / rowHeight));
     		}
 
-    		if ($$self.$$.dirty[0] & /*$visibleHeight*/ 2048 | $$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*startIndex, filteredRows*/ 384) {
-    			$$invalidate(102, endIndex = Math.min(startIndex + Math.ceil($visibleHeight / rowHeight), filteredRows.length - 1));
+    		if ($$self.$$.dirty[0] & /*$visibleHeight*/ 2048 | $$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*startIndex, filteredRows*/ 768) {
+    			$$invalidate(103, endIndex = Math.min(startIndex + Math.ceil($visibleHeight / rowHeight), filteredRows.length - 1));
     		}
 
-    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*startIndex*/ 256) {
+    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*startIndex*/ 512) {
     			$$invalidate(21, paddingTop = startIndex * rowHeight);
     		}
 
-    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*filteredRows, endIndex*/ 640) {
+    		if ($$self.$$.dirty[1] & /*rowHeight*/ 8388608 | $$self.$$.dirty[3] & /*filteredRows, endIndex*/ 1280) {
     			$$invalidate(22, paddingBottom = (filteredRows.length - endIndex - 1) * rowHeight);
     		}
 
-    		if ($$self.$$.dirty[3] & /*filteredRows, startIndex, endIndex*/ 896) {
+    		if ($$self.$$.dirty[3] & /*filteredRows, startIndex, endIndex*/ 1792) {
     			$$invalidate(10, visibleRows = filteredRows.slice(startIndex, endIndex + 1));
     		}
 
-    		if ($$self.$$.dirty[0] & /*visibleRows*/ 1024 | $$self.$$.dirty[3] & /*$rowTaskCache, $taskStore*/ 3072) {
+    		if ($$self.$$.dirty[0] & /*visibleRows*/ 1024 | $$self.$$.dirty[3] & /*$rowTaskCache, $taskStore*/ 6144) {
     			{
     				const tasks = [];
 
@@ -13478,6 +13561,7 @@ var app = (function () {
     		getRow,
     		insertRow,
     		insertChildRow,
+    		appendChildRow,
     		deleteRow,
     		getTask,
     		getTasks,
@@ -13572,9 +13656,10 @@ var app = (function () {
     				getRow: 91,
     				insertRow: 92,
     				insertChildRow: 93,
-    				deleteRow: 94,
-    				getTask: 95,
-    				getTasks: 96
+    				appendChildRow: 94,
+    				deleteRow: 95,
+    				getTask: 96,
+    				getTasks: 97
     			},
     			null,
     			[-1, -1, -1, -1, -1]
@@ -13665,16 +13750,20 @@ var app = (function () {
     		return this.$$.ctx[93];
     	}
 
-    	get deleteRow() {
+    	get appendChildRow() {
     		return this.$$.ctx[94];
     	}
 
-    	get getTask() {
+    	get deleteRow() {
     		return this.$$.ctx[95];
     	}
 
-    	get getTasks() {
+    	get getTask() {
     		return this.$$.ctx[96];
+    	}
+
+    	get getTasks() {
+    		return this.$$.ctx[97];
     	}
     }
 
@@ -13776,7 +13865,7 @@ var app = (function () {
     	};
     }
 
-    // (18:4) {#if !row.expanderRight}
+    // (17:4) {#if !row.expanderRight}
     function create_if_block$2(ctx) {
     	let t0;
     	let t1;
@@ -13871,7 +13960,7 @@ var app = (function () {
     	};
     }
 
-    // (34:8) {#if row.children}
+    // (33:8) {#if row.children}
     function create_if_block_5$1(ctx) {
     	let div;
     	let mounted;
@@ -13922,7 +14011,7 @@ var app = (function () {
     	};
     }
 
-    // (38:16) {:else}
+    // (37:16) {:else}
     function create_else_block_2$1(ctx) {
     	let html_tag;
     	let html_anchor;
@@ -13945,7 +14034,7 @@ var app = (function () {
     	};
     }
 
-    // (36:16) {#if row.expanded}
+    // (35:16) {#if row.expanded}
     function create_if_block_6$1(ctx) {
     	let html_tag;
     	let html_anchor;
@@ -13968,7 +14057,7 @@ var app = (function () {
     	};
     }
 
-    // (43:8) {#if row.extraHeaderHtml}
+    // (42:8) {#if row.extraHeaderHtml}
     function create_if_block_4$1(ctx) {
     	let html_tag;
     	let raw_value = /*row*/ ctx[0].extraHeaderHtml + "";
@@ -13994,7 +14083,7 @@ var app = (function () {
     	};
     }
 
-    // (19:8) {#if row.children}
+    // (18:8) {#if row.children}
     function create_if_block_2$1(ctx) {
     	let div;
     	let mounted;
@@ -14045,7 +14134,7 @@ var app = (function () {
     	};
     }
 
-    // (23:16) {:else}
+    // (22:16) {:else}
     function create_else_block$2(ctx) {
     	let html_tag;
     	let html_anchor;
@@ -14068,7 +14157,7 @@ var app = (function () {
     	};
     }
 
-    // (21:16) {#if row.expanded}
+    // (20:16) {#if row.expanded}
     function create_if_block_3$1(ctx) {
     	let html_tag;
     	let html_anchor;
@@ -14091,7 +14180,7 @@ var app = (function () {
     	};
     }
 
-    // (29:8) {#if row.extraHeaderHtml}
+    // (28:8) {#if row.extraHeaderHtml}
     function create_if_block_1$1(ctx) {
     	let html_tag;
     	let raw_value = /*row*/ ctx[0].extraHeaderHtml + "";
@@ -14228,11 +14317,39 @@ var app = (function () {
 
     function get_each_context$2(ctx, list, i) {
     	const child_ctx = ctx.slice();
-    	child_ctx[14] = list[i];
+    	child_ctx[15] = list[i];
     	return child_ctx;
     }
 
-    // (56:12) {:else}
+    // (53:12) {#if row.model.enableMoveRow}
+    function create_if_block_8(ctx) {
+    	let div;
+    	let i;
+    	let i_class_value;
+
+    	return {
+    		c() {
+    			div = element("div");
+    			i = element("i");
+    			attr(i, "class", i_class_value = "" + (null_to_empty(/*row*/ ctx[1].model.moveRowIconClass) + " svelte-ffcwbe"));
+    			attr(div, "class", "sg-table-icon svelte-ffcwbe");
+    		},
+    		m(target, anchor) {
+    			insert(target, div, anchor);
+    			append(div, i);
+    		},
+    		p(ctx, dirty) {
+    			if (dirty & /*row*/ 2 && i_class_value !== (i_class_value = "" + (null_to_empty(/*row*/ ctx[1].model.moveRowIconClass) + " svelte-ffcwbe"))) {
+    				attr(i, "class", i_class_value);
+    			}
+    		},
+    		d(detaching) {
+    			if (detaching) detach(div);
+    		}
+    	};
+    }
+
+    // (74:12) {:else}
     function create_else_block_1(ctx) {
     	let t;
     	let if_block1_anchor;
@@ -14240,8 +14357,8 @@ var app = (function () {
 
     	function select_block_type_2(ctx, dirty) {
     		if (/*row*/ ctx[1].model.headerHtml) return create_if_block_4;
-    		if (/*header*/ ctx[14].renderer) return create_if_block_5;
-    		if (/*header*/ ctx[14].type === 'resourceInfo') return create_if_block_6;
+    		if (/*header*/ ctx[15].renderer) return create_if_block_5;
+    		if (/*header*/ ctx[15].type === 'resourceInfo') return create_if_block_6;
     		return create_else_block_2;
     	}
 
@@ -14298,7 +14415,7 @@ var app = (function () {
     	};
     }
 
-    // (38:12) {#if header.type == 'tree'}
+    // (58:12) {#if header.type == 'tree'}
     function create_if_block$1$1(ctx) {
     	let tabletreecell;
     	let current;
@@ -14311,8 +14428,8 @@ var app = (function () {
     			}
     		});
 
-    	tabletreecell.$on("rowCollapsed", /*rowCollapsed_handler*/ ctx[9]);
-    	tabletreecell.$on("rowExpanded", /*rowExpanded_handler*/ ctx[10]);
+    	tabletreecell.$on("rowCollapsed", /*rowCollapsed_handler*/ ctx[10]);
+    	tabletreecell.$on("rowExpanded", /*rowExpanded_handler*/ ctx[11]);
 
     	return {
     		c() {
@@ -14326,7 +14443,7 @@ var app = (function () {
     			const tabletreecell_changes = {};
     			if (dirty & /*row*/ 2) tabletreecell_changes.row = /*row*/ ctx[1];
 
-    			if (dirty & /*$$scope, row, headers*/ 131075) {
+    			if (dirty & /*$$scope, row, headers*/ 262147) {
     				tabletreecell_changes.$$scope = { dirty, ctx };
     			}
 
@@ -14347,7 +14464,7 @@ var app = (function () {
     	};
     }
 
-    // (57:16) {#if row.model.iconClass}
+    // (75:16) {#if row.model.iconClass}
     function create_if_block_7(ctx) {
     	let div;
     	let i;
@@ -14375,9 +14492,9 @@ var app = (function () {
     	};
     }
 
-    // (72:16) {:else}
+    // (90:16) {:else}
     function create_else_block_2(ctx) {
-    	let t_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "";
+    	let t_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "";
     	let t;
 
     	return {
@@ -14388,7 +14505,7 @@ var app = (function () {
     			insert(target, t, anchor);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*row, headers*/ 3 && t_value !== (t_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "")) set_data(t, t_value);
+    			if (dirty & /*row, headers*/ 3 && t_value !== (t_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "")) set_data(t, t_value);
     		},
     		d(detaching) {
     			if (detaching) detach(t);
@@ -14396,13 +14513,13 @@ var app = (function () {
     	};
     }
 
-    // (67:57) 
+    // (85:57) 
     function create_if_block_6(ctx) {
     	let img;
     	let img_src_value;
     	let t0;
     	let div;
-    	let t1_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "";
+    	let t1_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "";
     	let t1;
 
     	return {
@@ -14427,7 +14544,7 @@ var app = (function () {
     				attr(img, "src", img_src_value);
     			}
 
-    			if (dirty & /*row, headers*/ 3 && t1_value !== (t1_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "")) set_data(t1, t1_value);
+    			if (dirty & /*row, headers*/ 3 && t1_value !== (t1_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "")) set_data(t1, t1_value);
     		},
     		d(detaching) {
     			if (detaching) detach(img);
@@ -14437,10 +14554,10 @@ var app = (function () {
     	};
     }
 
-    // (65:42) 
+    // (83:42) 
     function create_if_block_5(ctx) {
     	let html_tag;
-    	let raw_value = /*header*/ ctx[14].renderer(/*row*/ ctx[1]) + "";
+    	let raw_value = /*header*/ ctx[15].renderer(/*row*/ ctx[1]) + "";
     	let html_anchor;
 
     	return {
@@ -14454,7 +14571,7 @@ var app = (function () {
     			insert(target, html_anchor, anchor);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*headers, row*/ 3 && raw_value !== (raw_value = /*header*/ ctx[14].renderer(/*row*/ ctx[1]) + "")) html_tag.p(raw_value);
+    			if (dirty & /*headers, row*/ 3 && raw_value !== (raw_value = /*header*/ ctx[15].renderer(/*row*/ ctx[1]) + "")) html_tag.p(raw_value);
     		},
     		d(detaching) {
     			if (detaching) detach(html_anchor);
@@ -14463,7 +14580,7 @@ var app = (function () {
     	};
     }
 
-    // (63:16) {#if row.model.headerHtml}
+    // (81:16) {#if row.model.headerHtml}
     function create_if_block_4(ctx) {
     	let html_tag;
     	let raw_value = /*row*/ ctx[1].model.headerHtml + "";
@@ -14489,7 +14606,7 @@ var app = (function () {
     	};
     }
 
-    // (40:20) {#if row.model.iconClass}
+    // (60:20) {#if row.model.iconClass}
     function create_if_block_3(ctx) {
     	let div;
     	let i;
@@ -14517,9 +14634,9 @@ var app = (function () {
     	};
     }
 
-    // (50:20) {:else}
+    // (70:20) {:else}
     function create_else_block$1(ctx) {
-    	let t_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "";
+    	let t_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "";
     	let t;
 
     	return {
@@ -14530,7 +14647,7 @@ var app = (function () {
     			insert(target, t, anchor);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*row, headers*/ 3 && t_value !== (t_value = /*row*/ ctx[1].model[/*header*/ ctx[14].property] + "")) set_data(t, t_value);
+    			if (dirty & /*row, headers*/ 3 && t_value !== (t_value = /*row*/ ctx[1].model[/*header*/ ctx[15].property] + "")) set_data(t, t_value);
     		},
     		d(detaching) {
     			if (detaching) detach(t);
@@ -14538,10 +14655,10 @@ var app = (function () {
     	};
     }
 
-    // (48:46) 
+    // (68:46) 
     function create_if_block_2(ctx) {
     	let html_tag;
-    	let raw_value = /*header*/ ctx[14].renderer(/*row*/ ctx[1]) + "";
+    	let raw_value = /*header*/ ctx[15].renderer(/*row*/ ctx[1]) + "";
     	let html_anchor;
 
     	return {
@@ -14555,7 +14672,7 @@ var app = (function () {
     			insert(target, html_anchor, anchor);
     		},
     		p(ctx, dirty) {
-    			if (dirty & /*headers, row*/ 3 && raw_value !== (raw_value = /*header*/ ctx[14].renderer(/*row*/ ctx[1]) + "")) html_tag.p(raw_value);
+    			if (dirty & /*headers, row*/ 3 && raw_value !== (raw_value = /*header*/ ctx[15].renderer(/*row*/ ctx[1]) + "")) html_tag.p(raw_value);
     		},
     		d(detaching) {
     			if (detaching) detach(html_anchor);
@@ -14564,7 +14681,7 @@ var app = (function () {
     	};
     }
 
-    // (46:20) {#if row.model.headerHtml}
+    // (66:20) {#if row.model.headerHtml}
     function create_if_block_1(ctx) {
     	let html_tag;
     	let raw_value = /*row*/ ctx[1].model.headerHtml + "";
@@ -14590,7 +14707,7 @@ var app = (function () {
     	};
     }
 
-    // (39:16) <TableTreeCell on:rowCollapsed on:rowExpanded {row}>
+    // (59:16) <TableTreeCell on:rowCollapsed on:rowExpanded {row}>
     function create_default_slot$1(ctx) {
     	let t;
     	let if_block1_anchor;
@@ -14598,7 +14715,7 @@ var app = (function () {
 
     	function select_block_type_1(ctx, dirty) {
     		if (/*row*/ ctx[1].model.headerHtml) return create_if_block_1;
-    		if (/*header*/ ctx[14].renderer) return create_if_block_2;
+    		if (/*header*/ ctx[15].renderer) return create_if_block_2;
     		return create_else_block$1;
     	}
 
@@ -14653,39 +14770,58 @@ var app = (function () {
     	};
     }
 
-    // (36:4) {#each headers as header}
+    // (51:4) {#each headers as header}
     function create_each_block$2(ctx) {
     	let div;
+    	let t0;
     	let current_block_type_index;
-    	let if_block;
-    	let t;
+    	let if_block1;
+    	let t1;
     	let current;
+    	let if_block0 = /*row*/ ctx[1].model.enableMoveRow && create_if_block_8(ctx);
     	const if_block_creators = [create_if_block$1$1, create_else_block_1];
     	const if_blocks = [];
 
     	function select_block_type(ctx, dirty) {
-    		if (/*header*/ ctx[14].type == 'tree') return 0;
+    		if (/*header*/ ctx[15].type == 'tree') return 0;
     		return 1;
     	}
 
     	current_block_type_index = select_block_type(ctx);
-    	if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    	if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
 
     	return {
     		c() {
     			div = element("div");
-    			if_block.c();
-    			t = space();
+    			if (if_block0) if_block0.c();
+    			t0 = space();
+    			if_block1.c();
+    			t1 = space();
     			attr(div, "class", "sg-table-body-cell sg-table-cell svelte-ffcwbe");
-    			set_style(div, "width", /*header*/ ctx[14].width + "px");
+    			set_style(div, "width", /*header*/ ctx[15].width + "px");
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
+    			if (if_block0) if_block0.m(div, null);
+    			append(div, t0);
     			if_blocks[current_block_type_index].m(div, null);
-    			append(div, t);
+    			append(div, t1);
     			current = true;
     		},
     		p(ctx, dirty) {
+    			if (/*row*/ ctx[1].model.enableMoveRow) {
+    				if (if_block0) {
+    					if_block0.p(ctx, dirty);
+    				} else {
+    					if_block0 = create_if_block_8(ctx);
+    					if_block0.c();
+    					if_block0.m(div, t0);
+    				}
+    			} else if (if_block0) {
+    				if_block0.d(1);
+    				if_block0 = null;
+    			}
+
     			let previous_block_index = current_block_type_index;
     			current_block_type_index = select_block_type(ctx);
 
@@ -14699,34 +14835,35 @@ var app = (function () {
     				});
 
     				check_outros();
-    				if_block = if_blocks[current_block_type_index];
+    				if_block1 = if_blocks[current_block_type_index];
 
-    				if (!if_block) {
-    					if_block = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
-    					if_block.c();
+    				if (!if_block1) {
+    					if_block1 = if_blocks[current_block_type_index] = if_block_creators[current_block_type_index](ctx);
+    					if_block1.c();
     				} else {
-    					if_block.p(ctx, dirty);
+    					if_block1.p(ctx, dirty);
     				}
 
-    				transition_in(if_block, 1);
-    				if_block.m(div, t);
+    				transition_in(if_block1, 1);
+    				if_block1.m(div, t1);
     			}
 
     			if (!current || dirty & /*headers*/ 1) {
-    				set_style(div, "width", /*header*/ ctx[14].width + "px");
+    				set_style(div, "width", /*header*/ ctx[15].width + "px");
     			}
     		},
     		i(local) {
     			if (current) return;
-    			transition_in(if_block);
+    			transition_in(if_block1);
     			current = true;
     		},
     		o(local) {
-    			transition_out(if_block);
+    			transition_out(if_block1);
     			current = false;
     		},
     		d(detaching) {
     			if (detaching) detach(div);
+    			if (if_block0) if_block0.d();
     			if_blocks[current_block_type_index].d();
     		}
     	};
@@ -14765,6 +14902,7 @@ var app = (function () {
     			toggle_class(div, "sg-row-expanded", /*row*/ ctx[1].expanded);
     			toggle_class(div, "sg-hover", /*$hoveredRow*/ ctx[3] == /*row*/ ctx[1].model.id);
     			toggle_class(div, "sg-selected", /*$selectedRow*/ ctx[4] == /*row*/ ctx[1].model.id);
+    			toggle_class(div, "dragging-enabled", /*row*/ ctx[1].model.enableMoveRow);
     		},
     		m(target, anchor) {
     			insert(target, div, anchor);
@@ -14779,6 +14917,7 @@ var app = (function () {
 
     			if (!mounted) {
     				dispose = [
+    					action_destroyer(drag.call(null, div)),
     					listen(div, "keypress", keypress_handler),
     					action_destroyer(rowHeadElement_action = /*rowHeadElement*/ ctx[8].call(null, div, /*row*/ ctx[1]))
     				];
@@ -14839,6 +14978,10 @@ var app = (function () {
     			if (!current || dirty & /*row, $selectedRow, row*/ 18) {
     				toggle_class(div, "sg-selected", /*$selectedRow*/ ctx[4] == /*row*/ ctx[1].model.id);
     			}
+
+    			if (!current || dirty & /*row, row*/ 2) {
+    				toggle_class(div, "dragging-enabled", /*row*/ ctx[1].model.enableMoveRow);
+    			}
     		},
     		i(local) {
     			if (current) return;
@@ -14867,6 +15010,9 @@ var app = (function () {
     	};
     }
 
+    function drag(node) {
+    }
+
     const keypress_handler = () => {
     	
     };
@@ -14883,6 +15029,10 @@ var app = (function () {
     	component_subscribe($$self, hoveredRow, value => $$invalidate(3, $hoveredRow = value));
     	component_subscribe($$self, selectedRow, value => $$invalidate(4, $selectedRow = value));
     	const dispatch = createEventDispatcher();
+
+    	class SelectionManager {
+    		
+    	}
 
     	onMount(() => {
     		if (row.model.expanded == false) dispatch('rowCollapsed', { row });
@@ -14932,6 +15082,7 @@ var app = (function () {
     		hoveredRow,
     		selectedRow,
     		rowHeadElement,
+    		SelectionManager,
     		rowCollapsed_handler,
     		rowExpanded_handler
     	];
@@ -14940,7 +15091,11 @@ var app = (function () {
     class TableRow extends SvelteComponent {
     	constructor(options) {
     		super();
-    		init(this, options, instance$4$1, create_fragment$4$1, safe_not_equal, { headers: 0, row: 1 });
+    		init(this, options, instance$4$1, create_fragment$4$1, safe_not_equal, { headers: 0, row: 1, SelectionManager: 9 });
+    	}
+
+    	get SelectionManager() {
+    		return this.$$.ctx[9];
     	}
     }
 
@@ -17514,8 +17669,9 @@ var app = (function () {
     				headerHtml: '<input type="text">'
     			}; // contentHtml: '<input type="text">'
 
-    			gantt.insertRow(newModel, 4);
-    		});
+    			//            gantt.insertRow(newModel, 4);
+    			gantt.appendChildRow(newModel, 4);
+    		}); // gantt.insertChildRow(newModel, 4, 4);
 
     		// gantt.api.registerEvent('click', 'button[data-add-row]')
     		// const addButton = document.querySelectorAll('button[data-add-row]');
@@ -17964,11 +18120,13 @@ var app = (function () {
     				label: "Business Development",
     				class: 'row-group',
     				iconClass: 'fas fa-user-tie',
+    				contentHtml: '<span>Das ist eine Zeile</span>',
     				children: [
     					{ id: 21, label: "Pietra Fallow" },
     					{ id: 22, label: "Mariellen Torbard" },
     					{ id: 23, label: "Renate Humbee" }
-    				]
+    				],
+    				enableMoveRow: true
     			},
     			{ id: 3, label: "Ida Flewan" },
     			{ id: 4, label: "Lauréna Shrigley" },

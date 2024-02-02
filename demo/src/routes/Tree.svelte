@@ -54,11 +54,13 @@
                 label: "Adda Youell"
             }],
             expanderRight: true
+
         }, {
             id: 20,
             label: "Business Development",
             class: 'row-group',
             iconClass: 'fas fa-user-tie',
+            contentHtml: '<span>Das ist eine Zeile</span>',
             children: [{
                 id: 21,
                 label: "Pietra Fallow"
@@ -68,7 +70,8 @@
             }, {
                 id: 23,
                 label: "Renate Humbee"
-            }]
+            }],
+            enableMoveRow: true
         }, {
             id: 3,
             label: "Ida Flewan"

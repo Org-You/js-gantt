@@ -209,7 +209,9 @@
                 headerHtml: '<input type="text">',
                 // contentHtml: '<input type="text">'
             }
-            gantt.insertRow(newModel, 4);
+//            gantt.insertRow(newModel, 4);
+            gantt.appendChildRow(newModel, 4);
+            // gantt.insertChildRow(newModel, 4, 4);
         });
 
 		// gantt.api.registerEvent('click', 'button[data-add-row]')

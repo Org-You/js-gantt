@@ -60,6 +60,7 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
                         insertIndex = ids.indexOf(afterId.toString());
                     }
                 }
+
                 if (insertIndex !== -1) {
                     ids.splice(insertIndex + 1, 0, item.model.id);
                     entities[item.model.id] = item;

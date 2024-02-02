@@ -38,11 +38,25 @@
         }
 
         dispatchSelectionEvent(taskId, event) {
+            // console.log(taskId, event);
             let taskSetting = tasksSettings.get(taskId);
 
+            // console.log(tasksSettings, taskSetting);
             if (taskSetting === undefined) {
                 taskSetting = tasksSettings.get(taskId.toString());
             }
+            if (taskSetting === undefined) {
+                taskSetting = tasksSettings.get(parseInt(taskId));
+            }
+
+            // tasksSettings.forEach(element => {
+            //     console.log(element.modelId, taskId);
+            //     if (element.modelId == taskId) {
+            //         taskSetting = element;
+            //     }
+            // });
+
+            // console.log(tasksSettings, taskSetting);
 
             const x = taskSetting.getX();
             const y = taskSetting.getY();
@@ -55,6 +69,9 @@
 
                     if (taskSetting === undefined) {
                         taskSetting = tasksSettings.get(selId.toString());
+                    }
+                    if (taskSetting === undefined) {
+                        taskSetting = tasksSettings.get(parseInt(selId));
                     }
                     selectedItem.offsetData = {
                         offsetPos: {
@@ -82,6 +99,9 @@
 
                 if (taskSetting === undefined) {
                     taskSetting = tasksSettings.get(selId.toString());
+                }
+                if (taskSetting === undefined) {
+                    taskSetting = tasksSettings.get(parseInt(selId));
                 }
 
                 const draggable = new Draggable(selectedItem.HTMLElement, taskSetting, selectedItem.offsetData);

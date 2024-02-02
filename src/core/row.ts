@@ -16,6 +16,8 @@ export interface RowModel {
     expanded?:boolean;
     expanderRight?:boolean;
     extraHeaderHtml?: string;
+    enableMoveRow?:boolean;
+    moveRowIconClass: string;
 }
 
 export interface SvelteRow {
@@ -33,6 +35,8 @@ export interface SvelteRow {
     childLevel?: number;
     entities?:any;
     extraHeaderHtml?: string;
+    enableMoveRow?:boolean;
+    moveRowIconClass: string;
 }
 
 export class RowFactory {
@@ -51,6 +55,9 @@ export class RowFactory {
         row.contentHtml = row.contentHtml || undefined;
         // enable dragging of tasks to and from this row
         row.enableDragging = row.enableDragging === undefined ? true : row.enableDragging;
+
+        row.enableMoveRow = row.enableMoveRow === undefined ? false : row.enableMoveRow;
+        row.moveRowIconClass = row.moveRowIconClass === undefined ? 'fa fa-ellipsis-v' : row.moveRowIconClass;
         // height of row element
         const height = row.height || this.rowHeight;
 
@@ -60,7 +67,8 @@ export class RowFactory {
             height,
             expanded: true,
             expanderRight: row.expanderRight === undefined ? false : row.expanderRight,
-            extraHeaderHtml: row.extraHeaderHtml
+            extraHeaderHtml: row.extraHeaderHtml,
+            moveRowIconClass: row.moveRowIconClass
         }
     }
 

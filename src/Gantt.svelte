@@ -672,6 +672,38 @@
         taskFactory.updateTasks($allTasks);
     }
 
+    export function appendChildRow(model, parentId) {
+        // Get Parent Row
+        let parentRow = getRow(parentId);
+        let afterId = parentRow.model.id;
+
+        const row = rowFactory.createRow(model, parentRow.y + parentRow.height);
+        // Add new Row to Parent
+        if ( !parentRow.model.children) {
+            parentRow.model.children = [];
+        } else {
+            if (parentRow.allChildren.length > 0) {
+                let last = parentRow.allChildren[parentRow.allChildren.length - 1];
+                afterId = last.model.id;
+            }
+        }
+
+        row.childLevel = parentRow.childLevel + 1;
+        row.parent = parentRow;
+        row.allParents = row.allParents ? [...row.allParents, parentRow] : [parentRow];
+
+        // Add Parent to Row
+        parentRow.model.children = [...parentRow.model.children, model];
+        parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
+        parentRow.allChildren = parentRow.allChildren ? [...parentRow.allChildren, row] : [row];
+
+        rowStore.insertAt(row, afterId);
+        rowStore.refresh();
+        taskFactory.rowEntities = $rowStore.entities;
+        // Update Tasks
+        taskFactory.updateTasks($allTasks);
+    }
+
     export function deleteRow(rowId:number|string) {
 
         let row = getRow(rowId);
@@ -694,6 +726,20 @@
                         if (childRow.model.id === row.model.id) {
                             parentRow.children.splice(j, 1);
                          break;
+                        }
+                    }
+                }
+
+                const indexAllChild = parentRow.allChildren.indexOf(row);
+                if (indexAllChild > -1) {
+                    parentRow.allChildren.splice(indexAllChild, 1);
+                } else {
+
+                    for (let j = 0; j < parentRow.allChildren.length; j++) {
+                        let childRow = parentRow.allChildren[j]
+                        if (childRow.model.id === row.model.id) {
+                            parentRow.allChildren.splice(j, 1);
+                            break;
                         }
                     }
                 }
@@ -761,6 +807,60 @@
         } else {
             return 0;
         }
+    }
+
+    export function expandAll() {
+
+        let updateRows = [];
+        for (let i = 0; i < $allRows.length; i++) {
+            const row = $allRows[i];
+            row.expanded = true;
+            // row.model.expanded = true;
+            if(row.children)
+                show(row.children);
+            updateRows.push(row);
+        }
+
+        // updateYPositions();
+        // const rows = rowFactory.updateRows(updateRows);
+        rowStore.upsertAll(updateRows);
+        rowStore.refresh();
+        taskFactory.rowEntities = $rowStore.entities;
+        taskFactory.updateTasks($allTasks);
+    }
+    export function collapsAll() {
+
+        let updateRows = [];
+        for (let i = 0; i < $allRows.length; i++) {
+            const row = $allRows[i];
+            row.expanded = false;
+            // row.model.expanded = false;
+            if(row.children)
+                hide(row.children);
+            updateRows.push(row);
+        }
+        // updateYPositions();
+        // const rows = rowFactory.updateRows(updateRows);
+        rowStore.upsertAll(updateRows);
+        rowStore.refresh();
+        taskFactory.rowEntities = $rowStore.entities;
+        taskFactory.updateTasks($allTasks);
+    }
+
+    function hide(children) {
+        children.forEach(row => {
+            if(row.children)
+                hide(row.children);
+            row.hidden = true;
+        });
+    }
+
+    function show(children, hidden = false) {
+        children.forEach(row => {
+            if(row.children)
+                show(row.children, !row.expanded);
+            row.hidden = hidden;
+        });
     }
 
 </script>

@@ -14,6 +14,10 @@
 
     const dispatch = createEventDispatcher();
 
+    export class SelectionManager {
+
+    }
+
     let treeIndentationStyle = '';
     $: {
         treeIndentationStyle = row.parent ? `padding-left: ${row.childLevel*3}em;`:'';
@@ -33,18 +37,42 @@
             return rowHeadElementHook(node, model);
         }
     }
+
+    function drag(node) {
+
+        const ondrop = (event) => {
+        // console.log(event);
+        };
+
+        const ondrag = (event) => {
+            // console.log(event);
+
+        };
+
+        const onmouseup = () => {
+            // console.log(event);
+
+        };
+    }
 </script>
 
 <div data-row-id={row.model.id}
     style="height:{$rowHeight}px"
     class="sg-table-row {row.model.classes || ''}"
+     use:drag
      on:keypress={()=>{}}
      use:rowHeadElement={row}
     class:sg-row-expanded="{row.expanded}"
     class:sg-hover={$hoveredRow == row.model.id}
-    class:sg-selected={$selectedRow == row.model.id}>
+    class:sg-selected={$selectedRow == row.model.id}
+     class:dragging-enabled={row.model.enableMoveRow}>
     {#each headers as header}
         <div class="sg-table-body-cell sg-table-cell" style="width:{header.width}px">
+            {#if row.model.enableMoveRow}
+                <div class="sg-table-icon">
+                    <i class="{row.model.moveRowIconClass}"></i>
+                </div>
+            {/if}
             {#if header.type == 'tree'}
                 <TableTreeCell on:rowCollapsed on:rowExpanded {row}>
                     {#if row.model.iconClass}
