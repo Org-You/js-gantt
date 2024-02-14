@@ -1,4 +1,4 @@
-import type { ColumnService } from "./column";
+import type { ColumnService } from './column';
 
 export interface TimeRangeModel {
     id: number; // | string;
@@ -7,7 +7,7 @@ export interface TimeRangeModel {
 
     classes?: string | string[];
     label?: string;
-    enableResizing?: boolean;
+    resizable?: boolean;
 }
 
 export interface SvelteTimeRange {
@@ -26,16 +26,16 @@ export class TimeRangeFactory {
 
     create(model: TimeRangeModel): SvelteTimeRange {
         // enable dragging
-        model.enableResizing = model.enableResizing === undefined ? true : model.enableResizing;
+        model.resizable = model.resizable === undefined ? true : model.resizable;
 
         const left = this.columnService.getPositionByDate(model.from);
-        const right = this.columnService.getPositionByDate(model.to); 
+        const right = this.columnService.getPositionByDate(model.to);
 
         return {
             model,
             left: left,
-            width: right-left,
+            width: right - left,
             resizing: false
-        }
+        };
     }
 }
