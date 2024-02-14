@@ -565,7 +565,7 @@
         }
     }
 
-	export function scrollToTask(id, scrollBehavior = 'auto') {
+    export function scrollToTask(id, scrollBehavior = 'auto') {
         const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
 
         const task = $taskStore.entities[id];
@@ -598,6 +598,54 @@
 
         mainContainer.scrollTo(options);
     }
+
+    export function scrollToDate(date, scrollBehavior = 'auto') {
+        const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
+
+        const left = this.columnService.getPositionByDate(date);
+
+        const targetLeft = left;
+
+        const options = {
+            left: undefined,
+            behavior: scrollBehavior
+        };
+
+        if(targetLeft < scrollLeft) {
+            options.left = targetLeft;
+        }
+
+        if(targetLeft > scrollLeft + clientWidth) {
+            options.left = targetLeft - clientWidth;
+        }
+        console.log(targetLeft, options.left, scrollLeft, scrollLeft + clientWidth);
+
+        mainContainer.scrollTo(options);
+    }
+
+   // export function scrollToToday(scrollBehavior = 'auto') {
+   //      const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
+   //
+   //      const left = this.columnService.getPositionByDate(new Date().getTime());
+   //
+   //      const targetLeft = left;
+   //
+   //      const options = {
+   //          left: undefined,
+   //          behavior: scrollBehavior
+   //      };
+   //
+   //      if(targetLeft < scrollLeft) {
+   //          options.left = targetLeft;
+   //      }
+   //
+   //      if(targetLeft > scrollLeft + clientWidth) {
+   //          options.left = targetLeft - clientWidth;
+   //      }
+   //      console.log(targetLeft, options.left, scrollLeft, scrollLeft + clientWidth);
+   //
+   //      mainContainer.scrollTo(options);
+   //  }
 
     export function updateTask(model) {
         const task = taskFactory.createTask(model);
@@ -772,10 +820,33 @@
     $: rowContainerHeight = filteredRows.length * rowHeight;
 
     let startIndex;
-    $: startIndex = Math.floor(__scrollTop / rowHeight);
+    $: {
+        // Zeigt nur sichtbaren bereich an
+        //startIndex = Math.floor(__scrollTop / rowHeight);
+
+        // Zeigt noch eine ansicht oberhalb des sichtbaren bereichs an
+        // startIndex = Math.floor((__scrollTop - $visibleHeight) / rowHeight);
+
+        // Verhindert das neuladen am oberen rand
+        // if (startIndex < 0) {
+        //     startIndex = 0;
+        // }
+
+        // Zeigt alle inhalte an
+        startIndex = 0;
+    }
 
     let endIndex;
-    $: endIndex = Math.min(startIndex + Math.ceil($visibleHeight / rowHeight), filteredRows.length - 1);
+    $: {
+        // Zeigt alles an
+        endIndex = filteredRows.length - 1;
+
+        // Zeigt nur sichtbaren bereich an
+        //endIndex = Math.min(startIndex + Math.ceil($visibleHeight / rowHeight), filteredRows.length - 1);
+
+        // Zeigt noch eine Ansicht oberhalb des sichtbaren bereichs an
+        // endIndex = Math.min(startIndex + Math.ceil(($visibleHeight * 2) / rowHeight), filteredRows.length - 1);
+    }
 
     let paddingTop = 0;
     $: paddingTop = startIndex * rowHeight;
