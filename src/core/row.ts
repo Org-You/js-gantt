@@ -13,7 +13,7 @@ export interface RowModel {
     iconClass?: string;
     /** Url of image in row header */
     imageSrc?: string;
-    expanded?:boolean;
+    expanded?: boolean;
     expanderRight?:boolean;
     extraHeaderHtml?: string;
     enableMoveRow?:boolean;
@@ -33,7 +33,7 @@ export interface SvelteRow {
     expanded?: boolean;
     expanderRight?: boolean;
     childLevel?: number;
-    entities?:any;
+    entities?: any;
     extraHeaderHtml?: string;
     enableMoveRow?:boolean;
     moveRowIconClass: string;
@@ -42,8 +42,7 @@ export interface SvelteRow {
 export class RowFactory {
     rowHeight: number;
 
-    constructor(){
-    }
+    constructor() {}
 
     createRow(row: RowModel, y: number): SvelteRow {
         // defaults
@@ -69,7 +68,7 @@ export class RowFactory {
             expanderRight: row.expanderRight === undefined ? false : row.expanderRight,
             extraHeaderHtml: row.extraHeaderHtml,
             moveRowIconClass: row.moveRowIconClass
-        }
+        };
     }
 
     createRows(rows: RowModel[]) {
@@ -78,11 +77,17 @@ export class RowFactory {
         return ctx.result;
     }
 
-    createChildRows(rowModels: RowModel[], ctx: { y: number, result: SvelteRow[] }, parent: SvelteRow = null, level: number = 0, parents: SvelteRow[] = []) {
+    createChildRows(
+        rowModels: RowModel[],
+        ctx: { y: number; result: SvelteRow[] },
+        parent: SvelteRow = null,
+        level: number = 0,
+        parents: SvelteRow[] = []
+    ) {
         const rowsAtLevel = [];
         const allRows = [];
 
-        if(parent) {
+        if (parent) {
             parents = [...parents, parent];
         }
 
@@ -95,11 +100,20 @@ export class RowFactory {
             row.childLevel = level;
             row.parent = parent;
             row.allParents = parents;
+            if (parent) {
+                row.hidden = !(parent.model.expanded || parent.model.expanded == null);
+            }
 
             ctx.y += row.height;
 
-            if(rowModel.children) {
-                const nextLevel = this.createChildRows(rowModel.children, ctx, row, level+1, parents);
+            if (rowModel.children) {
+                const nextLevel = this.createChildRows(
+                    rowModel.children,
+                    ctx,
+                    row,
+                    level + 1,
+                    parents,
+                );
                 row.children = nextLevel.rows;
                 row.allChildren = nextLevel.allRows;
                 allRows.push(...nextLevel.allRows);

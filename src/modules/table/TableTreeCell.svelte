@@ -11,10 +11,10 @@
     const dispatch = createEventDispatcher();
 
     function onExpandToggle() {
-        if (row.expanded) {
-            dispatch('rowCollapsed', {row});
+        if (row.model.expanded || row.model.expanded == null) {
+            dispatch('rowCollapsed', { row });
         } else {
-            dispatch('rowExpanded', {row});
+            dispatch('rowExpanded', { row });
         }
     }
 </script>
@@ -23,7 +23,7 @@
     {#if !row.expanderRight}
         {#if row.children}
             <div class="sg-tree-expander" on:click="{onExpandToggle}">
-                {#if row.expanded}
+                {#if row.model.expanded}
                     {@html expandIconDown}
                 {:else}
                     {@html expandIconRight}
@@ -38,7 +38,7 @@
         <slot></slot>
         {#if row.children}
             <div class="sg-tree-expander" on:click="{onExpandToggle}">
-                {#if row.expanded}
+                {#if row.model.expanded}
                     {@html expandIconDown}
                 {:else}
                     {@html expandIconRight}

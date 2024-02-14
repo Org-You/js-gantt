@@ -4,7 +4,7 @@
     const dispatch = createEventDispatcher();
 
     import { Draggable } from '../core/drag';
-    import { setCursor } from '../utils/domUtils';
+    import { setCursor } from '../utils/dom';
 
     const { visibleWidth } = getContext('dimensions');
     const { mainContainer } = getContext('gantt');
@@ -17,13 +17,13 @@
     let dragging = false;
 
     const dragOptions = {
-        onDrag: (event) => {
-            x = event.x, dragging = true;
+        onDrag: event => {
+            (x = event.x), (dragging = true);
             dispatch('resize', { left: x });
             setCursor('col-resize');
         },
-        onDrop: (event) => {
-            x = event.x, dragging = false;
+        onDrop: event => {
+            (x = event.x), (dragging = false);
             dispatch('resize', { left: x });
             setCursor('default');
         },
@@ -33,12 +33,14 @@
         getX: () => x,
         getY: () => 0,
         getWidth: () => 0
-    }
+    };
 
     $: dragOptions.container = container;
 
     function resizer(node) {
-        return new Draggable(node, dragOptions, 'resizer');
+        const draggable = new Draggable(node, dragOptions, 'resizer');
+
+        return { destroy: () => draggable.destroy() };
     }
 
     function minLeft(x) {
@@ -56,7 +58,8 @@
 
 </script>
 
-<div class="sg-resize" style="left:{minLeft(x)}px " use:resizer></div>
+<div class="sg-resize" style="left:{minLeft(x)}px" use:resizer></div>
+
 <style>
     .sg-resize {
         z-index: 2;
@@ -66,7 +69,9 @@
         position: absolute;
         height: 100%;
 
-        transition: width 0.2s, transform 0.2s;
+        transition:
+            width 0.2s,
+            transform 0.2s;
     }
 
     .sg-resize:hover {

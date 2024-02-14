@@ -1,12 +1,14 @@
 <script lang="ts">
-    import { beforeUpdate, getContext } from 'svelte';
-    import type { GanttContext, GanttContextServices, GanttContextOptions } from '../gantt'
+    import { getContext } from 'svelte';
+    import type { GanttContext, GanttContextServices, GanttContextOptions } from '../gantt';
     import { Draggable } from '../core/drag';
-    import { timeRangeStore } from '../core/store';
+    import type { GanttDataStore } from '../core/store';
+    import { normalizeClassAttr } from '../utils/dom';
 
-    const { rowContainer } : GanttContext = getContext('gantt');
-    const { api, utils, columnService } : GanttContextServices = getContext('services');
-    const { resizeHandleWidth } : GanttContextOptions = getContext('options');
+    const { rowContainer }: GanttContext = getContext('gantt');
+    const { api, utils, columnService }: GanttContextServices = getContext('services');
+    const { resizeHandleWidth }: GanttContextOptions = getContext('options');
+    const { timeRangeStore } = getContext('dataStore') as GanttDataStore;
 
     export let model;
     export let width;
@@ -15,13 +17,13 @@
     const _position = {
         width,
         x: left
-    }
-    $: {
-        _position.x = left, _position.width = width;
     };
+    $: {
+        (_position.x = left), (_position.width = width);
+    }
 
     function drag(node) {
-        const ondrop = (event) => {
+        const ondrop = event => {
             const newFrom = utils.roundTo(columnService.getDateByPosition(event.x));
             const newTo = utils.roundTo(columnService.getDateByPosition(event.x + event.width));
             const newLeft = columnService.getPositionByDate(newFrom);
@@ -49,8 +51,8 @@
         }
 
         const draggable = new Draggable(node, {
-            onDown: (event) => {
-                api.timeranges.raise.clicked({model});
+            onDown: event => {
+                api.timeranges.raise.clicked({ model });
                 update({
                     left: event.x,
                     width: event.width,
@@ -58,8 +60,8 @@
                     resizing: true
                 });
             },
-            onResize: (event) => {
-                api.timeranges.raise.resized({model, left:event.x, width:event.width});
+            onResize: event => {
+                api.timeranges.raise.resized({ model, left: event.x, width: event.width });
                 update({
                     left: event.x,
                     width: event.width,
@@ -68,7 +70,7 @@
                 });
             },
             dragAllowed: false,
-            resizeAllowed: true,
+            resizeAllowed: () => isResizable(),
             onDrop: ondrop,
             container: rowContainer,
             resizeHandleWidth,
@@ -80,16 +82,27 @@
         return { destroy: () => draggable.destroy() };
     }
 
-    function setClass(node){
-        if(!model.classes) return;
-        node.classList.add(model.classes);
+    function isResizable() {
+        return model.resizable !== undefined ? model.resizable : true;
+    }
+
+    let classes;
+    $: {
+        classes = normalizeClassAttr(model.classes);
     }
 </script>
 
-<div class="sg-time-range-control" style="width:{_position.width}px;left:{_position.x}px;" use:setClass title="{model.hoverTitle}">
+<div
+    class="sg-time-range-control {classes}"
+    style="width:{_position.width}px;left:{_position.x}px"
+    class:sg-time-range-disabled={!isResizable()}
+    use:setClass
+    title="{model.hoverTitle}"
+>
     <div class="sg-time-range-handle-left" use:drag></div>
     <div class="sg-time-range-handle-right" use:drag></div>
 </div>
+
 <style>
     .sg-time-range-control {
         position: absolute;
@@ -105,7 +118,12 @@
         right: 0;
     }
 
-    .sg-time-range-handle-left::before, .sg-time-range-handle-right::before {
+    .sg-time-range-disabled {
+        display: none;
+    }
+
+    .sg-time-range-handle-left::before,
+    .sg-time-range-handle-right::before {
         position: absolute;
         content: '';
         bottom: 4px;

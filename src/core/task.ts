@@ -5,9 +5,9 @@ import {Readable} from "svelte/store";
 
 export interface TaskModel {
     id: number; // | string;
-    resourceId: number; // | string
-    from: any; // date
-    to: any; // date
+    resourceId: number | string; // | string
+    from: number; // date
+    to: number; // date
 
     amountDone?: number;
     classes?: string | string[];
@@ -19,6 +19,9 @@ export interface TaskModel {
     enableDragging?: boolean;
     moveRow?: boolean; // false prevents moving to another row
     extendMultiRow?: boolean;
+    labelBottom?: string;
+    type?: 'milestone' | 'task';
+    stickyLabel?: boolean;
 }
 
 export interface SvelteTask {
@@ -34,20 +37,25 @@ export interface SvelteTask {
     //Only for EntityType
     hidden?: boolean;
     y: number;
+
+    /* pack layout fields */
+    intersectsWith?: SvelteTask[];
+    numYSlots?: number;
+    yPos?: number;
+    topDelta?: number;
 }
 
 export class TaskFactory {
     columnService: ColumnService;
 
     rowPadding: number;
-    rowEntities: {[key:number]: SvelteRow}
+    rowEntities: { [key: number]: SvelteRow };
 
     constructor(columnService: ColumnService) {
-		this.columnService = columnService;
+        this.columnService = columnService;
     }
 
     createTask(model: TaskModel): SvelteTask {
-
         // id of task, every task needs to have a unique one
         //task.id = task.id || undefined;
         // completion %, indicated on task
@@ -63,11 +71,11 @@ export class TaskFactory {
         // html content of task, will override label
         model.html = model.html || undefined;
         // show button bar
-        model.showButton = model.showButton || false
+        model.showButton = model.showButton || false;
         // button classes, useful for fontawesome icons
-        model.buttonClasses = model.buttonClasses || ''
+        model.buttonClasses = model.buttonClasses || '';
         // html content of button
-        model.buttonHtml = model.buttonHtml || ''
+        model.buttonHtml = model.buttonHtml || '';
         // enable dragging of task
         model.enableDragging = model.enableDragging === undefined ? true : model.enableDragging;
         model.moveRow = model.moveRow === undefined ? true : model.moveRow;
@@ -79,7 +87,7 @@ export class TaskFactory {
         return {
             model,
             left: left,
-            width: right-left,
+            width: right - left,
             height: this.getHeight(model),
             top: this.getPosY(model),
             reflections: [],
@@ -136,12 +144,12 @@ export class TaskFactory {
         }
     }
 
-    getPosY(model){
+    getPosY(model) {
         return this.row(model.resourceId).y + this.rowPadding;
     }
 }
 
-function overlap(one: SvelteTask, other: SvelteTask){
+export function overlap(one: SvelteTask, other: SvelteTask) {
     return !(one.left + one.width <= other.left || one.left >= other.left + other.width);
 }
 

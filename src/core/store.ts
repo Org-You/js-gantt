@@ -5,18 +5,21 @@ import type { SvelteRow } from './row';
 import type { SvelteTimeRange } from './timeRange';
 
 interface EntityState<T> {
-    ids: (string | number)[],
-    entities: { [key: string]: T }
+    ids: (string | number)[];
+    entities: { [key: string]: T };
 }
 
 interface EntityType {
-    model: { id: string | number},
-    hidden?: boolean,
-    y: number,
-    height: number
+    model: { id: string | number};
+    hidden?: boolean;
+    y: number;
+    height: number;
 }
 
-export interface EntityStore<T extends EntityType> extends Readable<EntityState<T>> {
+export type EntityKey = string | number;
+
+export interface EntityStore<T extends EntityType, K extends EntityKey = EntityKey>
+    extends Readable<EntityState<T>> {
     _update(updater: (value: EntityState<T>) => EntityState<T>): void;
     add(entity: T): void;
     insertAt(entity: T, afterId: null|number|string): void;
@@ -24,29 +27,31 @@ export interface EntityStore<T extends EntityType> extends Readable<EntityState<
     update(entity: T): void;
     upsert(entity: T): void;
     upsertAll(entities: T[]): void;
-    remove(id: number | string): void;
-    delete(id: number | string): void;
-    deleteAll(ids: (number | string)[]): void;
+    delete(id: K): void;
+    deleteAll(ids: K[]): void;
     refresh(): void;
     set(value: EntityState<T>): void;
-    entities?:any;
+    entities?: Record<K, T>;
 }
 
-function createEntityStore<T extends EntityType>(): EntityStore<T> {
+function createEntityStore<T extends EntityType, K extends EntityKey = EntityKey>(): EntityStore<
+    T,
+    K
+> {
     const { subscribe, set, update } = writable<EntityState<T>>({ ids: [], entities: {} });
 
     return {
         set,
         _update: update,
         subscribe,
-        add: (item: T) => update(({ ids, entities }) => ({
-            ids: [...ids, item.model.id],
-            entities: {
-                ...entities,
-                [item.model.id]: item
-            }
-        })),
-
+        add: (item: T) =>
+            update(({ ids, entities }) => ({
+                ids: [...ids, item.model.id],
+                entities: {
+                    ...entities,
+                    [item.model.id]: item
+                }
+            })),
         insertAt: (item: T, afterId: null|number|string) => update(state => {
             const entities = { ...state.entities };
             let ids = [...state.ids];
@@ -122,63 +127,67 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
                 entities
             };
         }),
-        delete: (id: number | string) => update(state => {
-            const { [id]: _, ...entities } = state.entities;
+        delete: (id: number | string) =>
+            update(state => {
+                const { [id]: _, ...entities } = state.entities;
+                return {
+                    ids: state.ids.filter(i => i !== id),
+                    entities
+                };
+            }),
+        deleteAll: (ids: (number | string)[]) =>
+            update(state => {
+                const entities = { ...state.entities };
+                const idSet = new Set(ids);
 
-            return {
-                ids: state.ids.filter(i => i !== id),
-                entities
-            };
-        }),
-        deleteAll: (ids: (number | string)[]) => update(state => {
-            const entities = { ...state.entities };
-            const idSet = new Set(ids);
-
-            for (let i = 0; i < state.ids.length; i++) {
-                if (idSet.has(state.ids[i])) {
-                    delete entities[state.ids[i]];
+                for (let i = 0; i < state.ids.length; i++) {
+                    if (idSet.has(state.ids[i])) {
+                        delete entities[state.ids[i]];
+                    }
                 }
-            }
 
-            return {
-                ids: state.ids.filter(i => !idSet.has(i)),
-                entities
-            };
-        }),
-        update: (item: T) => update(({ ids, entities }) => ({
-            ids,
-            entities: {
-                ...entities,
-                [item.model.id]: item
-            }
-        })),
-        upsert: (item: T) => update(({ ids, entities }) => {
-            const hasIndex = ids.indexOf(item.model.id) !== -1;
-
-            return {
-                ids: hasIndex ? ids : [...ids, item.model.id],
+                return {
+                    ids: state.ids.filter(i => !idSet.has(i)),
+                    entities
+                };
+            }),
+        update: (item: T) =>
+            update(({ ids, entities }) => ({
+                ids,
                 entities: {
                     ...entities,
                     [item.model.id]: item
                 }
-            }
-        }),
-        upsertAll: (items: T[]) => update(state => {
-            const entities = { ...state.entities };
-            const ids = [...state.ids];
+            })),
+        upsert: (item: T) =>
+            update(({ ids, entities }) => {
+                const hasIndex = ids.indexOf(item.model.id) !== -1;
 
-            for (let i = 0; i < items.length; i++) {
-                if (ids.indexOf(items[i].model.id) === -1) {
-                    ids.push(items[i].model.id);
+                return {
+                    ids: hasIndex ? ids : [...ids, item.model.id],
+                    entities: {
+                        ...entities,
+                        [item.model.id]: item
+                    }
+                };
+            }),
+        upsertAll: (items: T[]) =>
+            update(state => {
+                const entities = { ...state.entities };
+                const ids = [...state.ids];
+
+                for (let i = 0; i < items.length; i++) {
+                    if (ids.indexOf(items[i].model.id) === -1) {
+                        ids.push(items[i].model.id);
+                    }
+                    entities[items[i].model.id] = items[i];
                 }
-                entities[items[i].model.id] = items[i];
-            }
 
-            return {
-                ids,
-                entities
-            };
-        }),
+                return {
+                    ids,
+                    entities
+                };
+            }),
         addAll: (items: T[]) => {
             const ids = [];
             const entities = {};
@@ -194,26 +203,6 @@ function createEntityStore<T extends EntityType>(): EntityStore<T> {
     };
 }
 
-export const taskStore = createEntityStore<SvelteTask>();
-export const rowStore = createEntityStore<SvelteRow>();
-export const timeRangeStore = createEntityStore<SvelteTimeRange>();
-
-export const allTasks = all<SvelteTask>(taskStore);
-export const allRows = all(rowStore);
-export const allTimeRanges = all(timeRangeStore);
-
-export const rowTaskCache = derived(allTasks, $allTasks => {
-    const cache = {};
-    for (let i = 0; i < $allTasks.length; i++) {
-        const task = $allTasks[i];
-        if (!cache[task.model.resourceId]) {
-            cache[task.model.resourceId] = [];
-        }
-    cache[task.model.resourceId].push(task.model.id);
-    }
-    return cache;
-});
-
 export function all<T extends EntityType>(store: EntityStore<T>): Readable<T[]> {
     return derived(store, ({ ids, entities }) => {
         const results = [];
@@ -224,7 +213,10 @@ export function all<T extends EntityType>(store: EntityStore<T>): Readable<T[]> 
     });
 }
 
-export function where<T extends EntityType>(store: EntityStore<T>, filterFn: (value: T) => any): Readable<T[]> {
+export function where<T extends EntityType>(
+    store: EntityStore<T>,
+    filterFn: (value: T) => boolean
+): Readable<T[]> {
     return derived(store, ({ ids, entities }) => {
         const results = [];
         for (let i = 0; i < ids.length; i++) {
@@ -235,3 +227,40 @@ export function where<T extends EntityType>(store: EntityStore<T>, filterFn: (va
         return results;
     });
 }
+
+export function createDataStore() {
+    const taskStore = createEntityStore<SvelteTask>();
+    const rowStore = createEntityStore<SvelteRow>();
+    const timeRangeStore = createEntityStore<SvelteTimeRange>();
+
+    const allTasks = all(taskStore);
+    const allRows = all(rowStore);
+    const allTimeRanges = all(timeRangeStore);
+
+    const rowTaskCache = derived(allTasks, $allTasks => {
+        const cache = {};
+        for (let i = 0; i < $allTasks.length; i++) {
+            const task = $allTasks[i];
+            if (!cache[task.model.resourceId]) {
+                cache[task.model.resourceId] = [];
+            }
+            cache[task.model.resourceId].push(task.model.id);
+        }
+        return cache;
+    });
+
+    const draggingTaskCache = writable<{ [id: string]: boolean }>({});
+
+    return {
+        taskStore,
+        rowStore,
+        timeRangeStore,
+        allTasks,
+        allRows,
+        allTimeRanges,
+        rowTaskCache,
+        draggingTaskCache
+    };
+}
+
+export type GanttDataStore = ReturnType<typeof createDataStore>;
