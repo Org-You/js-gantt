@@ -96,7 +96,6 @@
     class="sg-time-range-control {classes}"
     style="width:{_position.width}px;left:{_position.x}px"
     class:sg-time-range-disabled={!isResizable()}
-    use:setClass
     title="{model.hoverTitle}"
 >
     <div class="sg-time-range-handle-left" use:drag></div>

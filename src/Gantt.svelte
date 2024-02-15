@@ -651,6 +651,54 @@
         mainContainer.scrollTo(options);
     }
 
+    export function scrollToDate(date, scrollBehavior = 'auto') {
+        const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
+
+        const left = this.columnService.getPositionByDate(date);
+
+        const targetLeft = left;
+
+        const options = {
+            left: undefined,
+            behavior: scrollBehavior
+        };
+
+        if(targetLeft < scrollLeft) {
+            options.left = targetLeft;
+        }
+
+        if(targetLeft > scrollLeft + clientWidth) {
+            options.left = targetLeft - clientWidth;
+        }
+        // console.log(targetLeft, options.left, scrollLeft, scrollLeft + clientWidth);
+
+        mainContainer.scrollTo(options);
+    }
+
+    // export function scrollToToday(scrollBehavior = 'auto') {
+    //      const { scrollLeft, scrollTop, clientWidth, clientHeight } = mainContainer;
+    //
+    //      const left = this.columnService.getPositionByDate(new Date().getTime());
+    //
+    //      const targetLeft = left;
+    //
+    //      const options = {
+    //          left: undefined,
+    //          behavior: scrollBehavior
+    //      };
+    //
+    //      if(targetLeft < scrollLeft) {
+    //          options.left = targetLeft;
+    //      }
+    //
+    //      if(targetLeft > scrollLeft + clientWidth) {
+    //          options.left = targetLeft - clientWidth;
+    //      }
+    //      console.log(targetLeft, options.left, scrollLeft, scrollLeft + clientWidth);
+    //
+    //      mainContainer.scrollTo(options);
+    //  }
+
     export function updateTask(model) {
         const task = taskFactory.createTask(model);
         taskStore.upsert(task);
@@ -835,7 +883,14 @@
     $: rowContainerHeight = filteredRows.length * rowHeight;
 
     let startIndex;
-    $: startIndex = Math.floor(__scrollTop / rowHeight);
+    $: {
+        // Zeigt nur sichtbaren bereich an
+        startIndex = Math.floor(__scrollTop / rowHeight);
+
+        if (startIndex < 0) {
+            startIndex = 0;
+        }
+    }
 
     let endIndex;
     $: endIndex = Math.min(
@@ -952,6 +1007,14 @@
                 show(row.children, !row.expanded);
             row.hidden = hidden;
         });
+    }
+
+    export function getRowModels() {
+        return this.rows;
+    }
+
+    export function getTaskModels() {
+        return this.tasks;
     }
 
 </script>

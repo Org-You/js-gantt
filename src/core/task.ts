@@ -106,6 +106,7 @@ export class TaskFactory {
     updateTask(task: SvelteTask) {
         task.height = this.getHeight(task.model);
         task.top = this.getPosY(task.model);
+        task.y = task.top;
         return task;
     }
 
@@ -137,6 +138,9 @@ export class TaskFactory {
 
     getHeight(model){
         let row = this.row(model.resourceId);
+        if (!row) {
+            return 0;
+        }
         if (model.extendMultiRow && row.expanded) {
             return (row.height * (this.childRowCount(model.resourceId) + 1)) - (2 * this.rowPadding);
         } else {
@@ -145,7 +149,11 @@ export class TaskFactory {
     }
 
     getPosY(model) {
-        return this.row(model.resourceId).y + this.rowPadding;
+        let row = this.row(model.resourceId);
+        if (!row) {
+            return 0;
+        }
+        return row.y + this.rowPadding;
     }
 }
 

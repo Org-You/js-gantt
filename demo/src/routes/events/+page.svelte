@@ -28,7 +28,7 @@
             options.headers = [{ unit: 'day', format: 'DD.MM.YYYY' }, { unit: 'hour', format: 'HH' }]
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         setView.set('none');
     }
@@ -43,7 +43,7 @@
             currentEnd.add(1, 'day');
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         moveView.set('none');
     }
@@ -74,49 +74,56 @@
             label: "PET-CT",
             from: time("13:30"),
             to: time("15:00"),
-            classes: "orange"
+            classes: "orange",
+			moveRow: false,
         }, {
             id: 4,
             resourceId: 1,
             label: "Auditing",
             from: time("9:30"),
             to: time("11:30"),
-            classes: "orange"
+            classes: "orange",
+			moveRow: false,
         }, {
             id: 5,
             resourceId: 2,
             label: "Security Clearance",
             from: time("15:15"),
             to: time("16:00"),
-            classes: "green"
+            classes: "green",
+			moveRow: false,
         }, {
             id: 6,
             resourceId: 2,
             label: "Policy Analysis",
             from: time("14:00"),
             to: time("17:00"),
-            classes: "blue"
+            classes: "blue",
+			moveRow: false,
         }, {
             id: 7,
             resourceId: 2,
             label: "Xbox 360",
             from: time("13:00"),
             to: time("14:00"),
-            classes: "blue"
+            classes: "blue",
+			moveRow: false,
         }, {
             id: 8,
             resourceId: 3,
             label: "GNU/Linux",
             from: time("14:00"),
             to: time("15:30"),
-            classes: "blue"
+            classes: "blue",
+			moveRow: false,
         }, {
             id: 9,
             resourceId: 4,
             label: "Electronic Trading",
             from: time("15:00"),
             to: time("17:00"),
-            classes: "green"
+            classes: "green",
+			moveRow: false,
         }, {
             id: 10,
             resourceId: 5,
@@ -239,7 +246,7 @@
 </style>
 
 <svelte:head>
-    <title>Gantt events - svelte-gantt</title> 
+    <title>Gantt events - svelte-gantt</title>
 </svelte:head>
 <div class="container">
     <div id="example-gantt-events"></div>

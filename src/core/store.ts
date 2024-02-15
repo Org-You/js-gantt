@@ -22,11 +22,12 @@ export interface EntityStore<T extends EntityType, K extends EntityKey = EntityK
     extends Readable<EntityState<T>> {
     _update(updater: (value: EntityState<T>) => EntityState<T>): void;
     add(entity: T): void;
-    insertAt(entity: T, afterId: null|number|string): void;
+    insertAt(entity: T, afterId: K): void;
     addAll(entities: T[]): void;
     update(entity: T): void;
     upsert(entity: T): void;
     upsertAll(entities: T[]): void;
+    remove(id: K): void;
     delete(id: K): void;
     deleteAll(ids: K[]): void;
     refresh(): void;
@@ -52,7 +53,7 @@ function createEntityStore<T extends EntityType, K extends EntityKey = EntityKey
                     [item.model.id]: item
                 }
             })),
-        insertAt: (item: T, afterId: null|number|string) => update(state => {
+        insertAt: (item: T, afterId: K) => update(state => {
             const entities = { ...state.entities };
             let ids = [...state.ids];
 
@@ -91,7 +92,7 @@ function createEntityStore<T extends EntityType, K extends EntityKey = EntityKey
                 entities
             };
         }),
-        remove: (id: number | string) => update(state => {
+        remove: (id: K) => update(state => {
             const { [id]: _, ...entities } = state.entities;
             let ids = [...state.ids];
 

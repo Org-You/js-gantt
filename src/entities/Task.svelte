@@ -4,6 +4,7 @@
     import { normalizeClassAttr, setCursor, throttle } from '../utils/dom';
     import type { GanttContext, GanttContextOptions, GanttContextServices } from '../gantt';
     import type { GanttDataStore } from '../core/store';
+    import { get } from 'svelte/store';
 
     export let model: TaskModel;
     export let height: number;
@@ -156,7 +157,8 @@
                 const targetRow = $rowStore.entities[model.resourceId];
                 const left = newLeft;
                 const width = newRight - newLeft;
-                const top = $rowPadding + targetRow.y;
+                // const top = $rowPadding + targetRow.y;
+                const top = model.moveRow ? $rowPadding + targetRow.y : task.top;
 
                 updatePosition(left, top + topDelta, width);
 
@@ -247,7 +249,10 @@
                 },
                 onDrag: event => {
                     _position.x = event.x;
-                    _position.y = event.y;
+                    //"moveRow" = false prevents moving to another row
+                    if (model.moveRow) {
+                        _position.y = event.y;
+                    }
                     _dragging = true;
                     api.tasks.raise.move(model);
                     scrollIfOutOfBounds(event.event);
