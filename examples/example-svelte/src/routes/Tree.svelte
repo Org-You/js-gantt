@@ -89,28 +89,34 @@
 			"from": time("9:00"),
 			"to": time("11:00"),
 			"classes": "orange",
-            "extendMultiRow": true
+            "extendMultiRow": true,
+			"reflactable2" : false
 		},{
 			"id": 1,
 			"resourceId": 11,
 			"label": "LPCVD",
 			"from": time("9:00"),
 			"to": time("11:00"),
-			"classes": "orange"
+			"classes": "orange",
+			"reflactable" : false
 		}, {
             "id": 2,
             "resourceId": 12,
             "label": "Entrepreneurship",
             "from": time("10:00"),
             "to": time("12:30"),
-            "classes": "orange"
+            "classes": "orange",
+			"reflactable" : false,
+			"reflactable2" : false
         }, {
             "id": 3,
             "resourceId": 13,
             "label": "PET-CT",
             "from": time("13:30"),
             "to": time("15:00"),
-            "classes": "orange"
+            "classes": "orange",
+			"reflactable" : false,
+			"reflactable2" : false
         }, {
             "id": 4,
             "resourceId": 14,

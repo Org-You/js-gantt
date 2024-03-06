@@ -194,9 +194,13 @@
 
                     const opts = { rowPadding: $rowPadding };
                     targetRow.allChildren.forEach(r => {
-                        const reflectedTask = reflectTask(newTask, r, opts);
-                        newTask.reflections.push(reflectedTask.model.id);
-                        reflectedTasks.push(reflectedTask);
+                        if (r.model.visibleReflactions) {
+                            const reflectedTask = reflectTask(newTask, r, opts);
+                            if (reflectedTask) {
+                                newTask.reflections.push(reflectedTask.model.id);
+                                reflectedTasks.push(reflectedTask);
+                            }
+                        }
                     });
                 }
 
@@ -205,9 +209,13 @@
 
                     const opts = { rowPadding: $rowPadding };
                     targetRow.allParents.forEach(r => {
-                        const reflectedTask = reflectTask(newTask, r, opts);
-                        newTask.reflections.push(reflectedTask.model.id);
-                        reflectedTasks.push(reflectedTask);
+                        if (r.model.visibleReflactions) {
+                            const reflectedTask = reflectTask(newTask, r, opts);
+                            if (reflectedTask) {
+                                newTask.reflections.push(reflectedTask.model.id);
+                                reflectedTasks.push(reflectedTask);
+                            }
+                        }
                     });
                 }
 

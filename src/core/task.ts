@@ -22,6 +22,8 @@ export interface TaskModel {
     labelBottom?: string;
     type?: 'milestone' | 'task';
     stickyLabel?: boolean;
+    reflactable?: boolean;
+    reflactable2?: boolean;
 }
 
 export interface SvelteTask {
@@ -56,6 +58,7 @@ export class TaskFactory {
     }
 
     createTask(model: TaskModel): SvelteTask {
+        console.log('task', model);
         // id of task, every task needs to have a unique one
         //task.id = task.id || undefined;
         // completion %, indicated on task
@@ -80,6 +83,7 @@ export class TaskFactory {
         model.enableDragging = model.enableDragging === undefined ? true : model.enableDragging;
         model.moveRow = model.moveRow === undefined ? true : model.moveRow;
         model.extendMultiRow = model.extendMultiRow === undefined ? false : model.extendMultiRow;
+        model.reflactable = model.reflactable === undefined ? true : model.reflactable;
 
         const left = this.columnService.getPositionByDate(model.from) | 0;
         const right = this.columnService.getPositionByDate(model.to) | 0;
@@ -163,6 +167,11 @@ export function overlap(one: SvelteTask, other: SvelteTask) {
 
 export function reflectTask(task: SvelteTask, row: SvelteRow, options: { rowPadding: number }) {
     const reflectedId = `reflected-task-${task.model.id}-${row.model.id}`;
+
+    console.log(task.model);
+    if (!task.model.reflactable) {
+        return null;
+    }
 
     const model = {
         ...task.model,

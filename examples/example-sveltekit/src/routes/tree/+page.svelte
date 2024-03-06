@@ -28,7 +28,7 @@
             options.headers = [{ unit: 'day', format: 'DD.MM.YYYY' }, { unit: 'hour', format: 'HH' }]
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         setView.set('none');
     }
@@ -43,7 +43,7 @@
             currentEnd.add(1, 'day');
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         moveView.set('none');
     }
@@ -70,7 +70,7 @@
         }
     ];
 
-    
+
     let options2 = getContext('options');
 
     export const data = {
@@ -123,7 +123,9 @@
             "label": "LPCVD",
             "from": time("9:00"),
             "to": time("11:00"),
-            "classes": "orange"
+            "classes": "orange",
+            "reflactable" : false,
+            "reflactable2" : false
         }, {
             "id": 2,
             "resourceId": 12,

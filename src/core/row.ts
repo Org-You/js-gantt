@@ -18,6 +18,7 @@ export interface RowModel {
     extraHeaderHtml?: string;
     enableMoveRow?:boolean;
     moveRowIconClass: string;
+    visibleReflactions?: boolean;
 }
 
 export interface SvelteRow {
@@ -57,6 +58,7 @@ export class RowFactory {
 
         row.enableMoveRow = row.enableMoveRow === undefined ? false : row.enableMoveRow;
         row.moveRowIconClass = row.moveRowIconClass === undefined ? 'fa fa-ellipsis-v' : row.moveRowIconClass;
+        row.visibleReflactions = row.visibleReflactions === undefined ? true : row.visibleReflactions;
         // height of row element
         const height = row.height || this.rowHeight;
 

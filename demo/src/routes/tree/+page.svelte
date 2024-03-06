@@ -28,7 +28,7 @@
             options.headers = [{ unit: 'day', format: 'DD.MM.YYYY' }, { unit: 'hour', format: 'HH' }]
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         setView.set('none');
     }
@@ -43,7 +43,7 @@
             currentEnd.add(1, 'day');
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         moveView.set('none');
     }
@@ -70,7 +70,7 @@
         }
     ];
 
-    
+
     let options2 = getContext('options');
 
     export const data = {
@@ -86,9 +86,14 @@
                 id: 12,
                 label: "Mélina Giacovetti"
             }, {
-                id: 13,
-                label: "Marlène Lasslett"
-            }, {
+				id: 13,
+				label: "Marlène Lasslett",
+				visibleReflactions: false,
+				children: [{
+					id: 131,
+					label: "Petunia Mulliner"
+				}]
+			}, {
                 id: 14,
                 label: "Adda Youell"
             }]
@@ -123,21 +128,24 @@
             "label": "LPCVD",
             "from": time("9:00"),
             "to": time("11:00"),
-            "classes": "orange"
+            "classes": "orange",
+			"reflactable" : false
         }, {
             "id": 2,
             "resourceId": 12,
             "label": "Entrepreneurship",
             "from": time("10:00"),
             "to": time("12:30"),
-            "classes": "orange"
+            "classes": "orange",
+			"reflactable" : false
         }, {
             "id": 3,
-            "resourceId": 13,
+            "resourceId": 131,
             "label": "PET-CT",
             "from": time("13:30"),
             "to": time("15:00"),
-            "classes": "orange"
+            "classes": "orange",
+			"reflactable" : true
         }, {
             "id": 4,
             "resourceId": 14,
@@ -238,7 +246,7 @@
 </style>
 
 <svelte:head>
-    <title>Tree view - svelte-gantt</title> 
+    <title>Tree view - svelte-gantt</title>
 </svelte:head>
 <div class="container">
     <div id="example-gantt"></div>

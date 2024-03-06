@@ -480,6 +480,7 @@
         const tasks = [];
         const opts = { rowPadding: $_rowPadding };
         const draggingTasks = {};
+        console.log(taskData);
         taskData.forEach(t => {
             if ($draggingTaskCache[t.id]) {
                 draggingTasks[t.id] = true;
@@ -490,17 +491,25 @@
 
             if (reflectOnChildRows && row.allChildren) {
                 row.allChildren.forEach(r => {
-                    const reflectedTask = reflectTask(task, r, opts);
-                    task.reflections.push(reflectedTask.model.id);
-                    tasks.push(reflectedTask);
+                    if (r.model.visibleReflactions) {
+                        const reflectedTask = reflectTask(task, r, opts);
+                        if (reflectedTask) {
+                            task.reflections.push(reflectedTask.model.id);
+                            tasks.push(reflectedTask);
+                        }
+                    }
                 });
             }
 
             if (reflectOnParentRows && row.allParents.length > 0) {
                 row.allParents.forEach(r => {
-                    const reflectedTask = reflectTask(task, r, opts);
-                    task.reflections.push(reflectedTask.model.id);
-                    tasks.push(reflectedTask);
+                    if (r.model.visibleReflactions) {
+                        const reflectedTask = reflectTask(task, r, opts);
+                        if (reflectedTask) {
+                            task.reflections.push(reflectedTask.model.id);
+                            tasks.push(reflectedTask);
+                        }
+                    }
                 });
             }
 
@@ -885,18 +894,38 @@
     let startIndex;
     $: {
         // Zeigt nur sichtbaren bereich an
-        startIndex = Math.floor(__scrollTop / rowHeight);
+        // startIndex = Math.floor(__scrollTop / rowHeight);
 
+        // Zeigt noch eine ansicht oberhalb des sichtbaren bereichs an
+        startIndex = Math.floor((__scrollTop - $visibleHeight) / rowHeight);
+
+        // Verhindert das neuladen am oberen rand
         if (startIndex < 0) {
             startIndex = 0;
         }
+
+        // Zeigt alle inhalte an
+        // startIndex = 0;
     }
 
     let endIndex;
-    $: endIndex = Math.min(
-        startIndex + Math.ceil($visibleHeight / rowHeight),
-        filteredRows.length - 1
-    );
+    $: {
+        // Zeigt alles an
+        // endIndex = filteredRows.length - 1;
+
+        // Zeigt nur sichtbaren bereich an
+        // endIndex = Math.min(
+        //     startIndex + Math.ceil($visibleHeight / rowHeight),
+        //     filteredRows.length - 1
+        // );
+
+        // Zeigt noch eine Ansicht oberhalb des sichtbaren bereichs an
+        endIndex = Math.min(
+            startIndex + Math.ceil(($visibleHeight * 2) / rowHeight),
+            filteredRows.length - 1
+        );
+    }
+
 
     let paddingTop = 0;
     $: paddingTop = startIndex * rowHeight;
@@ -961,7 +990,7 @@
         for (let i = 0; i < $allRows.length; i++) {
             const row = $allRows[i];
             row.expanded = true;
-            // row.model.expanded = true;
+            row.model.expanded = true;
             if(row.children)
                 show(row.children);
             updateRows.push(row);
@@ -980,7 +1009,7 @@
         for (let i = 0; i < $allRows.length; i++) {
             const row = $allRows[i];
             row.expanded = false;
-            // row.model.expanded = false;
+            row.model.expanded = false;
             if(row.children)
                 hide(row.children);
             updateRows.push(row);
