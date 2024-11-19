@@ -55,6 +55,7 @@ export class RowFactory {
         row.contentHtml = row.contentHtml || undefined;
         // enable dragging of tasks to and from this row
         row.enableDragging = row.enableDragging === undefined ? true : row.enableDragging;
+        row.expanded = row.expanded === undefined ? true : row.expanded;
 
         row.enableMoveRow = row.enableMoveRow === undefined ? false : row.enableMoveRow;
         row.moveRowIconClass = row.moveRowIconClass === undefined ? 'fa fa-ellipsis-v' : row.moveRowIconClass;

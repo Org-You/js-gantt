@@ -23,7 +23,6 @@
         y: top + topDelta,
         width: width
     };
-
     $: updatePosition(left, top + topDelta, width);
     function updatePosition(x, y, width) {
         if (!_dragging && !_resizing) {
@@ -99,7 +98,54 @@
 
             for (let i = 0; i < children.length; i++) {
                 let row = children[i];
-                childCount += childRowCount(row);
+                if (row.expanded) {
+                    childCount += childRowCount(row);
+                }
+            }
+        }
+
+        return childCount;
+    }
+
+    function siblingRowCount(originalRow) {
+        let parentRow = originalRow.parent;
+        let childCount = 0;
+        let children = parentRow ? parentRow.children : originalRow.children;
+
+        if (children && children.length > 0) {
+            let start = false;
+            for (let i = 0; i < children.length; i++) {
+                let row = children[i];
+
+                if (row.model.id == originalRow.model.id) {
+                    start = true;
+                }
+
+                if (start ) {
+                    if (row.expanded) {
+                        childCount += siblingChildRowCount(row);
+                    } else {
+                        childCount += 1;
+                    }
+                }
+            }
+        }
+
+        return childCount;
+    }
+
+    function siblingChildRowCount(row) {
+        let childCount = 1;
+        let children = row.children;
+
+        if (children && children.length > 0) {
+            childCount += children.length;
+
+            for (let i = 0; i < children.length; i++) {
+                let row = children[i];
+                if (row.expanded) {
+                    childCount += childRowCount(row);
+                }
             }
         }
 
@@ -108,11 +154,21 @@
 
     function getHeight(targetRow, model) {
 
-        if (model.extendMultiRow && targetRow.expanded) {
-            return (targetRow.height * (childRowCount(targetRow) + 1)) - (2 * $rowPadding);
+        if (model.extendMultiRow && !model.reflected) {
+            if (model.reflectInSibling) {
+                return (targetRow.height * (siblingRowCount(targetRow))) - (2 * $rowPadding);
+            } else if (targetRow.model.expanded) {
+                return (targetRow.height * (childRowCount(targetRow) + 1)) - (2 * $rowPadding);
+            } else {
+                return targetRow.height - 2 * $rowPadding;
+            }
         } else {
             return targetRow.height - 2 * $rowPadding;
         }
+    }
+
+    function getSingleHeight(targetRow) {
+        return targetRow.height - 2 * $rowPadding;
     }
 
     function drag(_: HTMLElement) {
@@ -130,6 +186,7 @@
             if (event.dragging) {
                 const targetRow = dndManager.getTarget('row', event.mouseEvent);
                 if (targetRow) {
+                    this.height = getHeight(targetRow, model);
                     model.resourceId = targetRow.model.id;
                     api.tasks.raise.switchRow(this, targetRow, sourceRow);
                 } else {
@@ -164,6 +221,7 @@
 
                 const newTask = {
                     ...task,
+                    height: this.height,
                     left: left,
                     width: width,
                     top: top,
@@ -197,6 +255,7 @@
                         if (r.model.visibleReflactions) {
                             const reflectedTask = reflectTask(newTask, r, opts);
                             if (reflectedTask) {
+                                reflectedTask.height = getSingleHeight(r);
                                 newTask.reflections.push(reflectedTask.model.id);
                                 reflectedTasks.push(reflectedTask);
                             }
@@ -212,6 +271,7 @@
                         if (r.model.visibleReflactions) {
                             const reflectedTask = reflectTask(newTask, r, opts);
                             if (reflectedTask) {
+                                reflectedTask.height = getSingleHeight(r);
                                 newTask.reflections.push(reflectedTask.model.id);
                                 reflectedTasks.push(reflectedTask);
                             }
@@ -266,16 +326,20 @@
                     scrollIfOutOfBounds(event.event);
                 },
                 dragAllowed: () => {
+                    let row = $rowStore.entities[model.resourceId];
+                    let rowDragging = row ? row.model.enableDragging : false;
                     return (
-                        $rowStore.entities[model.resourceId].model.enableDragging &&
+                        rowDragging &&
                         model.enableDragging
                     );
                 },
                 resizeAllowed: () => {
+                    let row = $rowStore.entities[model.resourceId];
+                    let rowDragging = row ? row.model.enableDragging : false;
                     return (
                         model.type !== 'milestone' &&
-                        $rowStore.entities[model.resourceId].model.enableDragging &&
-                        model.enableDragging
+                        rowDragging &&
+                        model.enableDragging && model.enableResize
                     );
                 },
                 onDrop: onDrop,
@@ -306,10 +370,16 @@
     }
 
     function hasExtendMultiRow() {
-        if (model.extendMultiRow) {
+        if (model.extendMultiRow && !reflected) {
             return 'sg-extend-multi-row';
         }
         return '';
+    }
+    function isDraggingEnabled() {
+        let row = $rowStore.entities[model.resourceId];
+        let rowDragging = row ? row.model.enableDragging : false;
+
+        return rowDragging && model.enableDragging && model.enableResize;
     }
 
     function onClick(event: MouseEvent) {
@@ -325,7 +395,9 @@
 
     let resizeEnabled: boolean;
     $: {
-        resizeEnabled = model.type !== 'milestone' && $rowStore.entities[model.resourceId].model.enableDragging && model.enableDragging;
+        let row = $rowStore.entities[model.resourceId];
+        let rowDragging = row ? row.model.enableDragging : false;
+        resizeEnabled = model.type !== 'milestone' && rowDragging && model.enableDragging && model.enableResize;
     }
 </script>
 
@@ -341,7 +413,7 @@
     class:sg-task-reflected={reflected}
     class:sg-task-selected={$selectedTasks[model.id]}
     class:resize-enabled={resizeEnabled}
-    class:dragging-enabled={$rowStore.entities[model.resourceId].model.enableDragging && model.enableDragging}
+    class:dragging-enabled={isDraggingEnabled()}
     class:sg-task--sticky={model.stickyLabel}
 >
     {#if model.type === 'milestone'}

@@ -10,16 +10,16 @@
     let mounted = false;
 
     import { createDataStore } from './core/store';
-    import { Task, Row, TimeRange, TimeRangeHeader } from './entities';
+    import { Task, Row, TimeRange, TimeRangeHeader, model } from './entities';
     import { Columns, ColumnHeader } from './column';
     import { Resizer } from './ui';
 
     import { GanttUtils, getPositionByDate } from './utils/utils';
     import { getRelativePos, isLeftClick } from './utils/dom';
     import { GanttApi } from './core/api';
-    import { TaskFactory, reflectTask } from './core/task';
+    import { TaskFactory, reflectTask, singleRowHeight } from './core/task';
     import type { SvelteTask } from './core/task';
-    import { RowFactory } from './core/row';
+    import { RowFactory, type SvelteRow } from './core/row';
     import { TimeRangeFactory } from './core/timeRange';
     import { DragDropManager } from './core/drag';
     import { SelectionManager } from './core/selectionManager';
@@ -480,7 +480,6 @@
         const tasks = [];
         const opts = { rowPadding: $_rowPadding };
         const draggingTasks = {};
-        console.log(taskData);
         taskData.forEach(t => {
             if ($draggingTaskCache[t.id]) {
                 draggingTasks[t.id] = true;
@@ -489,28 +488,32 @@
             const row = $rowStore.entities[task.model.resourceId];
             task.reflections = [];
 
-            if (reflectOnChildRows && row.allChildren) {
-                row.allChildren.forEach(r => {
-                    if (r.model.visibleReflactions) {
-                        const reflectedTask = reflectTask(task, r, opts);
-                        if (reflectedTask) {
-                            task.reflections.push(reflectedTask.model.id);
-                            tasks.push(reflectedTask);
+            if (row) {
+                if (reflectOnChildRows && row.allChildren) {
+                    row.allChildren.forEach(r => {
+                        if (r.model.visibleReflactions) {
+                            const reflectedTask = reflectTask(task, r, opts);
+                            if (reflectedTask) {
+                                reflectedTask.height = singleRowHeight(r, opts);
+                                task.reflections.push(reflectedTask.model.id);
+                                tasks.push(reflectedTask);
+                            }
                         }
-                    }
-                });
-            }
+                    });
+                }
 
-            if (reflectOnParentRows && row.allParents.length > 0) {
-                row.allParents.forEach(r => {
-                    if (r.model.visibleReflactions) {
-                        const reflectedTask = reflectTask(task, r, opts);
-                        if (reflectedTask) {
-                            task.reflections.push(reflectedTask.model.id);
-                            tasks.push(reflectedTask);
+                if (reflectOnParentRows && row.allParents.length > 0) {
+                    row.allParents.forEach(r => {
+                        if (r.model.visibleReflactions) {
+                            const reflectedTask = reflectTask(task, r, opts);
+                            if (reflectedTask) {
+                                reflectedTask.height = singleRowHeight(r, opts);
+                                task.reflections.push(reflectedTask.model.id);
+                                tasks.push(reflectedTask);
+                            }
                         }
-                    }
-                });
+                    });
+                }
             }
 
             tasks.push(task);
@@ -711,6 +714,9 @@
     export function updateTask(model) {
         const task = taskFactory.createTask(model);
         taskStore.upsert(task);
+        let tasks = taskFactory.updateReflection(task, $allTasks, reflectOnParentRows, reflectOnChildRows);
+
+        taskStore.upsertAll(tasks);
     }
 
     export function updateTasks(taskModels) {
@@ -782,6 +788,7 @@
         parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
         parentRow.allChildren = parentRow.allChildren ? [...parentRow.allChildren, row] : [row];
 
+        rowStore.update(parentRow);
         rowStore.insertAt(row, afterId);
 
         taskFactory.rowEntities = $rowStore.entities;
@@ -814,6 +821,7 @@
         parentRow.children = parentRow.children ? [...parentRow.children, row] : [row];
         parentRow.allChildren = parentRow.allChildren ? [...parentRow.allChildren, row] : [row];
 
+        rowStore.update(parentRow);
         rowStore.insertAt(row, afterId);
         rowStore.refresh();
         taskFactory.rowEntities = $rowStore.entities;
@@ -945,7 +953,10 @@
             if ($rowTaskCache[row.model.id]) {
                 for (let j = 0; j < $rowTaskCache[row.model.id].length; j++) {
                     const id = $rowTaskCache[row.model.id][j];
-                    tasks.push($taskStore.entities[id]);
+                    const task = $taskStore.entities[id];
+                    if (task) {
+                        tasks.push(task);
+                    }
                     rendered[id] = true;
                 }
             }
@@ -954,7 +965,10 @@
         // render all tasks being dragged if not already
         for (const id in $draggingTaskCache) {
             if (!rendered[id]) {
-                tasks.push($taskStore.entities[id]);
+                const task = $taskStore.entities[id];
+                if (task) {
+                    tasks.push(task);
+                }
                 rendered[id] = true;
             }
         }
@@ -989,15 +1003,16 @@
         let updateRows = [];
         for (let i = 0; i < $allRows.length; i++) {
             const row = $allRows[i];
+            if (row.childLevel > 0) {
+                row.hidden = false;
+            }
             row.expanded = true;
             row.model.expanded = true;
             if(row.children)
                 show(row.children);
             updateRows.push(row);
         }
-
-        // updateYPositions();
-        // const rows = rowFactory.updateRows(updateRows);
+        updateRowYPositions();
         rowStore.upsertAll(updateRows);
         rowStore.refresh();
         taskFactory.rowEntities = $rowStore.entities;
@@ -1008,18 +1023,37 @@
         let updateRows = [];
         for (let i = 0; i < $allRows.length; i++) {
             const row = $allRows[i];
+            if (row.childLevel > 0) {
+                row.hidden = true;
+            }
             row.expanded = false;
             row.model.expanded = false;
             if(row.children)
                 hide(row.children);
             updateRows.push(row);
         }
-        // updateYPositions();
-        // const rows = rowFactory.updateRows(updateRows);
+
+        updateRowYPositions();
         rowStore.upsertAll(updateRows);
         rowStore.refresh();
         taskFactory.rowEntities = $rowStore.entities;
         taskFactory.updateTasks($allTasks);
+    }
+
+    export function updateAllTasks() {
+        taskFactory.rowEntities = $rowStore.entities;
+        taskFactory.updateTasks($allTasks);
+    }
+
+    function updateRowYPositions() {
+        let y = 0;
+        $rowStore.ids.forEach(id => {
+            const row = $rowStore.entities[id];
+            if (!row.hidden) {
+                $rowStore.entities[id].y = y;
+                y += row.height;
+            }
+        });
     }
 
     function hide(children) {
@@ -1074,7 +1108,7 @@
             {visibleRows}
         />
 
-        <Resizer x={tableWidth} style="min-width:{minimumWidth()}px " on:resize={onResize} container={ganttElement}></Resizer>
+        <Resizer x={tableWidth} min={minimumSpaceLeft} max={minimumSpaceRight} style="min-width:{minimumWidth()}px " on:resize={onResize} container={ganttElement}></Resizer>
     {/each}
 
     <div class="sg-timeline sg-view" style="min-width:{minimumWidth()}px ">

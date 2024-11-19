@@ -3,7 +3,7 @@ import type { SvelteRow } from '../../core/row';
 export interface TableHeader {
     /** Table column title */
     title: string;
-    titleHtml: string;
+    titleHtml?: string;
     /** Table row property */
     property: string;
     width?: number;

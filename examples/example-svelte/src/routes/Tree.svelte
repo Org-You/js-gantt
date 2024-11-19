@@ -89,8 +89,7 @@
 			"from": time("9:00"),
 			"to": time("11:00"),
 			"classes": "orange",
-            "extendMultiRow": true,
-			"reflactable2" : false
+            "extendMultiRow": true
 		},{
 			"id": 1,
 			"resourceId": 11,
@@ -107,7 +106,7 @@
             "to": time("12:30"),
             "classes": "orange",
 			"reflactable" : false,
-			"reflactable2" : false
+			"extendMultiRow" : true
         }, {
             "id": 3,
             "resourceId": 13,
@@ -115,8 +114,7 @@
             "from": time("13:30"),
             "to": time("15:00"),
             "classes": "orange",
-			"reflactable" : false,
-			"reflactable2" : false
+			"reflactable" : false
         }, {
             "id": 4,
             "resourceId": 14,

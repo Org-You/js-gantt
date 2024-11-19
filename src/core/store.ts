@@ -242,10 +242,12 @@ export function createDataStore() {
         const cache = {};
         for (let i = 0; i < $allTasks.length; i++) {
             const task = $allTasks[i];
-            if (!cache[task.model.resourceId]) {
-                cache[task.model.resourceId] = [];
+            if (task && task.model) {
+                if (!cache[task.model.resourceId]) {
+                    cache[task.model.resourceId] = [];
+                }
+                cache[task.model.resourceId].push(task.model.id);
             }
-            cache[task.model.resourceId].push(task.model.id);
         }
         return cache;
     });
