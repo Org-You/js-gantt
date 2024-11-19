@@ -166,7 +166,7 @@
 		ganttBodyModules: [SvelteGanttDependencies],
         minimumSpaceLeft: 250,
         minimumSpaceRight: 250,
-        expandIconDown: '<i class="fas fa-angle-down"></i>',
+        expandIconDown: '<i class="fa fa-angle-down"></i>',
         taskElementHook: (node, task) => {
             let popup;
             function onHover() {

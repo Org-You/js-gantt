@@ -147,8 +147,8 @@
     export let rowElementHook = null;
     export let rowHeadElementHook = null;
 
-    export let expandIconDown = '<i class="fas fa-angle-down"></i>';
-    export let expandIconRight = '<i class="fas fa-angle-right"></i>';
+    export let expandIconDown = '<i class="fa fa-angle-down"></i>';
+    export let expandIconRight = '<i class="fa fa-angle-right"></i>';
 
     /** Controls how the tasks will render */
     export let layout: 'overlap' | 'pack' = 'overlap';
