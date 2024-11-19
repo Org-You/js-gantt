@@ -203,7 +203,6 @@ export class TaskFactory {
 
         if (model.extendMultiRow && !model.reflected) {
             if (model.reflectInSibling) {
-                console.log('reflectInSibling 3')
                 return (row.height * (this.siblingRowCount(model.resourceId))) - (2 * this.rowPadding);
             } else if (row.model.expanded) {
                 return (row.height * (this.childRowCount(model.resourceId) + 1)) - (2 * this.rowPadding);

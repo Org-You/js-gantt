@@ -376,6 +376,7 @@
     let __scrollTop = 0;
     let __scrollLeft = 0;
     function scrollable(node) {
+        scrollables.push({ node, orientation: 'vertical' });
         const onscroll = event => {
             const { scrollTop, scrollLeft } = node;
 
@@ -682,8 +683,6 @@
         if(targetLeft > scrollLeft + clientWidth) {
             options.left = targetLeft - clientWidth;
         }
-        // console.log(targetLeft, options.left, scrollLeft, scrollLeft + clientWidth);
-
         mainContainer.scrollTo(options);
     }
 

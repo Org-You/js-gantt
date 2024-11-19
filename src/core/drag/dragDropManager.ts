@@ -16,7 +16,7 @@ export class DragDropManager {
                 const { entities } = get(rowStore);
                 const targetRow = entities[rowId];
 
-                if (targetRow.model.enableDragging) {
+                if (targetRow.model.enableDragging || targetRow.model.canAddMilestone) {
                     return targetRow;
                 }
             }

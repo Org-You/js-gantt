@@ -4,6 +4,7 @@ export interface RowModel {
     classes?: string | string[];
     contentHtml?: string;
     enableDragging?: boolean;
+    canAddMilestone?: boolean;
     height: number;
     /** Child rows in expandable tree */
     children?: RowModel[];
@@ -55,6 +56,7 @@ export class RowFactory {
         row.contentHtml = row.contentHtml || undefined;
         // enable dragging of tasks to and from this row
         row.enableDragging = row.enableDragging === undefined ? true : row.enableDragging;
+        row.canAddMilestone = row.canAddMilestone === undefined ? true : row.canAddMilestone;
         row.expanded = row.expanded === undefined ? true : row.expanded;
 
         row.enableMoveRow = row.enableMoveRow === undefined ? false : row.enableMoveRow;

@@ -43,9 +43,16 @@
         scrollables.push({ node, orientation: 'vertical' });
 
         function onScroll(event) {
-            headerContainer.scrollLeft = node.scrollLeft;
-        }
+            const { scrollTop, scrollLeft } = node;
 
+            scrollables.forEach(scrollable => {
+                if (scrollable.orientation === 'horizontal') {
+                    scrollable.node.scrollLeft = scrollLeft;
+                } else {
+                    scrollable.node.scrollTop = scrollTop;
+                }
+            });
+        }
         node.addEventListener('scroll', onScroll);
 
         return {
@@ -152,7 +159,6 @@
 
         if (model.extendMultiRow && !model.reflected) {
             if (model.reflectInSibling) {
-                console.log('reflectInSibling 2')
                 return (row.height * (siblingRowCount(model.resourceId) + 1)) - (2 * $rowPadding);
             } else if (row.model.expanded) {
                 return (row.height * (childRowCount(model.resourceId) + 1)) - (2 * $rowPadding);
@@ -320,7 +326,7 @@
     .sg-table-scroller {
         width: 100%;
         border-bottom: 1px solid #efefef;
-        overflow-y: hidden;
+        overflow-y: scroll;
     }
 
     .sg-table-header {

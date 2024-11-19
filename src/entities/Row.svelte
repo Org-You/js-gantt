@@ -28,6 +28,7 @@
     class="sg-row {row.model.classes}"
     data-row-id={row.model.id}
     on:dblclick={() => {api.rows.raise.dblclicked(row.model)}}
+    on:contextmenu={() => {api.rows.raise.contextmenu(row.model)}}
     on:keypress={()=>{}}
     use:rowElement={row}
     class:sg-hover={$hoveredRow == row.model.id}
