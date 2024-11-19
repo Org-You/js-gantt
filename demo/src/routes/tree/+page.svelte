@@ -78,7 +78,7 @@
             id: 10,
             label: "Accounting",
             class: 'row-group',
-            iconClass: 'fas fa-calculator',
+            iconClass: 'fa fa-calculator',
             children: [{
                 id: 11,
                 label: "Petunia Mulliner"
@@ -101,7 +101,7 @@
             id: 20,
             label: "Business Development",
             class: 'row-group',
-            iconClass: 'fas fa-user-tie',
+            iconClass: 'fa fa-user-tie',
             children: [{
                 id: 21,
                 label: "Pietra Fallow"
@@ -123,13 +123,23 @@
             label: "Ange Kembry"
         }],
         tasks: [{
+			"id": 1123,
+			"resourceId": 10,
+			"label": "Test",
+			"from": time("9:00"),
+			"to": time("11:00"),
+			"classes": "orange",
+			"extendMultiRow": true
+		},{
             "id": 1,
             "resourceId": 11,
             "label": "LPCVD",
             "from": time("9:00"),
             "to": time("11:00"),
             "classes": "orange",
-			"reflactable" : false
+			"reflactable" : false,
+            "extendMultiRow": true,
+            "reflectInSibling": true
         }, {
             "id": 2,
             "resourceId": 12,
@@ -217,7 +227,9 @@
         tableHeaders: [{ title: 'Label', property: 'label', width: 140, type: 'tree' }],
         tableWidth: 240,
         ganttTableModules: [SvelteGanttTable],
-        ganttBodyModules: [SvelteGanttDependencies]
+        ganttBodyModules: [SvelteGanttDependencies],
+        minimumSpaceLeft: 50,
+        minimumSpaceRight: 150,
     }
 
     let gantt;
@@ -229,6 +241,14 @@
         const opts = event.detail;
         Object.assign(options, opts);
         gantt.$set(options);
+    }
+
+    function expandAll() {
+
+        gantt.expandAll();
+    }
+    function collapsAll() {
+        gantt.collapsAll();
     }
 </script>
 
@@ -243,6 +263,30 @@
         overflow: auto;
         flex: 1;
     }
+
+    #open {
+        position: absolute;
+        bottom: 0;
+        right: 60px;
+        z-index: 1;
+        background-color: #ee6e73;
+        color: white;
+        padding: 1rem;
+        margin: 0.5rem;
+        cursor: grab;
+    }
+
+    #close{
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        z-index: 1;
+        background-color: #ee6e73;
+        color: white;
+        padding: 1rem;
+        margin: 0.5rem;
+        cursor: grab;
+    }
 </style>
 
 <svelte:head>
@@ -250,5 +294,7 @@
 </svelte:head>
 <div class="container">
     <div id="example-gantt"></div>
+    <div id="open" on:click={expandAll}><i class="fa fa-expand"></i></div>
+    <div id="close" on:click={collapsAll}><i class="fa fa-compress"></i></div>
     <GanttOptions options={options} on:change={onChangeOptions}/>
 </div>

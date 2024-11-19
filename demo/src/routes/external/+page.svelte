@@ -28,7 +28,7 @@
             options.headers = [{ unit: 'day', format: 'DD.MM.YYYY' }, { unit: 'hour', format: 'HH' }]
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         setView.set('none');
     }
@@ -43,7 +43,7 @@
             currentEnd.add(1, 'day');
         }
         options.from = currentStart;
-        options.to = currentEnd; 
+        options.to = currentEnd;
         gantt.$set(options);
         moveView.set('none');
     }
@@ -52,7 +52,7 @@
     let currentEnd = time('18:00');
 
     const colors = ['blue', 'green', 'orange']
-    
+
     let options2 = getContext('options');
 
     export const data = {
@@ -78,7 +78,34 @@
             label: "PET-CT",
             from: time("13:30"),
             to: time("15:00"),
-            classes: "orange"
+            classes: "orange",
+            amountDone: 0,
+            assigns: [],
+            buttonClasses: "",
+            buttonHtml: "",
+            canDrag: "1",
+            canResize: "1",
+            canWrite: "1",
+            color: "#aa17b2",
+            description: "",
+            duration: 1,
+            enableDragging: true,
+            enableResize: true,
+            extendMultiRow: false,
+            html: "<span title=\"10,00 Std. pro Tag\">10,00 Std. pro Tag</span>",
+            moveRow: false,
+            oyOrderEnd: "2024-06-23",
+            oyOrderStart: "2024-06-13",
+            oySectionEnd: "",
+            oySectionQuantity: "",
+            oySectionStart: "",
+            oyTaskType: "section",
+            oyUserRegTime: 7.5,
+            oyUsersQuantity: 7.5,
+            reflactable: true,
+            showButton: true,
+            subjectId: "",
+            user_id: ""
         }, {
             id: 4,
             resourceId: 1,
@@ -106,7 +133,8 @@
             label: "Xbox 360",
             from: time("13:00"),
             to: time("14:00"),
-            classes: "blue"
+            classes: "blue",
+			"extendMultiRow": true
         }, {
             id: 8,
             resourceId: 3,
@@ -156,33 +184,42 @@
     let gantt;
     onMount(() => {
         window.gantt = gantt = new SvelteGantt({ target: document.getElementById('example-gantt'), props: options });
-        const external = new SvelteGanttExternal(document.getElementById('new-task'), {
-            gantt,
-            onsuccess: (row, date, gantt) => {
-                console.log(row.model.id, new Date(date).toISOString())
-                const id = 5000 + Math.floor(Math.random() * 1000);
-                gantt.updateTask({
-                    id,
-                    label: `Task #${id}`,
-                    from: date,
-                    to: date + 3 * 60 * 60 * 1000,
-                    classes: colors[(Math.random() * colors.length) | 0],
-                    resourceId: row.model.id
-                });
-            },
-            elementContent: () => {
-                const element = document.createElement('div');
-                element.innerHTML = 'New Task';
-                element.className = 'sg-external-indicator';
-                return element;
-            }
-        });
+
+         const external = new SvelteGanttExternal(document.getElementById('new-task'), {
+
+             gantt,
+             onsuccess: (row, date, gantt) => {
+                 gantt.removeTask(3)
+                  console.log(row.model.id, new Date(date).toISOString())
+                  const id = 5000 + Math.floor(Math.random() * 1000);
+                  gantt.updateTask({
+                      id,
+                      label: `Task #${id}`,
+                      from: date,
+                      to: date + 3 * 60 * 60 * 1000,
+                      classes: colors[(Math.random() * colors.length) | 0],
+                      resourceId: row.model.id
+                  });
+             },
+              elementContent: () => {
+                  const element = document.createElement('div');
+                  element.innerHTML = 'New Task';
+                  element.className = 'sg-external-indicator';
+                  return element;
+              }
+         });
     });
 
     function onChangeOptions(event) {
         const opts = event.detail;
         Object.assign(options, opts);
         gantt.$set(options);
+    }
+
+    function onClickOptions() {
+        let task = gantt.getTask('3');
+        console.log(task);
+        gantt.removeTask('3')
     }
 </script>
 
@@ -212,10 +249,14 @@
 </style>
 
 <svelte:head>
-    <title>External draggable - svelte-gantt</title> 
+    <title>External draggable - svelte-gantt</title>
 </svelte:head>
 <div class="container">
     <div id="example-gantt"></div>
+    <div id="delete-task">Delete to gantt</div>
+    <GanttOptions  on:click={onClickOptions}/>
+</div>
+
+<div class="container">
     <div id="new-task">Drag to gantt</div>
-    <GanttOptions options={options} on:change={onChangeOptions}/>
 </div>
