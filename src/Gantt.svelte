@@ -298,7 +298,8 @@
     const ganttContext = {
         scrollables,
         hoveredRow,
-        selectedRow
+        selectedRow,
+        verticalScrollListener
     };
     setContext('gantt', ganttContext);
 
@@ -384,7 +385,9 @@
                 if (scrollable.orientation === 'horizontal') {
                     scrollable.node.scrollLeft = scrollLeft;
                 } else {
-                    scrollable.node.scrollTop = scrollTop;
+                     if (node != scrollable.node) {
+                         scrollable.node.scrollTop = scrollTop;
+                     }
                 }
             });
 
@@ -567,6 +570,10 @@
         selectionManager,
         columnService
     });
+
+    export function verticalScrollListener(node) {
+        scrollable(node)
+    }
 
     export function refreshTimeRanges() {
         timeRangeStore._update(({ ids, entities }) => {

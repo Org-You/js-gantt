@@ -30,7 +30,7 @@
     const { from, to, width, visibleWidth, headerHeight } : GanttContextDimensions= getContext('dimensions');
     const { rowPadding, rowHeight } : GanttContextOptions = getContext('options');
     const { rowStore, taskStore } = getContext('dataStore') as GanttDataStore;
-    const { scrollables } : GanttContext = getContext('gantt');
+    const { scrollables, verticalScrollListener } : GanttContext = getContext('gantt');
     const { taskFactory } : SvelteGanttComponent = getContext('component');
 
 
@@ -40,6 +40,7 @@
 
     let headerContainer;
     function scrollListener(node) {
+        // verticalScrollListener(node);
         scrollables.push({ node, orientation: 'vertical' });
 
         function onScroll(event) {
@@ -47,9 +48,11 @@
 
             scrollables.forEach(scrollable => {
                 if (scrollable.orientation === 'horizontal') {
-                    scrollable.node.scrollLeft = scrollLeft;
+                    // scrollable.node.scrollLeft = scrollLeft;
                 } else {
-                    scrollable.node.scrollTop = scrollTop;
+                    if (node != scrollable.node) {
+                        scrollable.node.scrollTop = scrollTop;
+                    }
                 }
             });
         }
